@@ -37,6 +37,6 @@
     <text x="80" y="20" font-size="24" font-weight="700"
           font-family="Inter,-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif"
           fill="url(#white)" filter="url(#softShadow)" letter-spacing="1">
-        AI 管家
+        AI 管理
     </text>
 </svg>

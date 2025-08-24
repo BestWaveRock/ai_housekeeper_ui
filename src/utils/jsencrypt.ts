@@ -1,5 +1,5 @@
 // @ts-ignore
-import JSEncrypt from 'jsencrypt/bin/jsencrypt.min.js';
+import JSEncrypt from 'jsencrypt';
 
 // 密钥对生成 http://web.chacuo.net/netrsakeypair
 
