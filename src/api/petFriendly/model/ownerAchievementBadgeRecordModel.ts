@@ -84,9 +84,9 @@ export interface PetOwnerAchievementBadgeRecordForm {
 export interface PetOwnerAchievementBadgeRecordVo {
   /**  */
   achievementBadgeRecordId?: number;
-  /**  */
+  /** 创建时间 */
   createTime?: any;
-  /**  */
+  /** 更新时间 */
   updateTime?: any;
   /** 状态:0=正常,1=停用,2=未开始,3=进行中,4=已获得,5=标记作废,6=标记获得 */
   status?: number;

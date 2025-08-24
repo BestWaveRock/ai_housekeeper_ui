@@ -136,9 +136,9 @@ export interface PetServiceConsumerRecordForm {
 export interface PetServiceConsumerRecordVo {
   /**  */
   consumerId?: number;
-  /**  */
+  /** 创建时间 */
   createTime?: any;
-  /**  */
+  /** 更新时间 */
   updateTime?: any;
   /** 状态:0=点击,1=填写,2=发起,3=等待派单,4=进行中,5=完成待评价,6=完成,7=服务取消,8=服务售后发起,9=售后等待分配,10=售后处理中,11=售后完成待评价,12=售后完成,13=售后取消,14=标记异常单,15=标记正常单 */
   status?: number;

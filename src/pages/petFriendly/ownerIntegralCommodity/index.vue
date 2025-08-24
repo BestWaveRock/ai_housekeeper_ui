@@ -200,8 +200,8 @@
     >
       <my-descriptions :loading="openViewLoading">
         <t-descriptions-item label="">{{ form.integralCommodityId }}</t-descriptions-item>
-        <t-descriptions-item label="">{{ parseTime(form.createTime) }}</t-descriptions-item>
-        <t-descriptions-item label="">{{ parseTime(form.updateTime) }}</t-descriptions-item>
+        <t-descriptions-item label="创建时间">{{ parseTime(form.createTime) }}</t-descriptions-item>
+        <t-descriptions-item label="更新时间">{{ parseTime(form.updateTime) }}</t-descriptions-item>
         <t-descriptions-item label="状态:0=正常,1=停用,2=草稿">{{ form.status }}</t-descriptions-item>
         <t-descriptions-item label="商品名称">{{ form.commodityTitle }}</t-descriptions-item>
         <t-descriptions-item label="商品编码">{{ form.commodityCode }}</t-descriptions-item>
@@ -267,8 +267,8 @@ const rules = ref<Record<string, Array<FormRule>>>({
 // 列显隐信息
 const columns = ref<Array<PrimaryTableCol>>([
   { title: `选择列`, colKey: 'row-select', type: 'multiple', width: 50, align: 'center' },
-  { title: ``, colKey: 'createTime', align: 'center', minWidth: 112, width: 180 },
-  { title: ``, colKey: 'updateTime', align: 'center', minWidth: 112, width: 180 },
+  { title: `创建时间`, colKey: 'createTime', align: 'center', minWidth: 112, width: 180 },
+  { title: `更新时间`, colKey: 'updateTime', align: 'center', minWidth: 112, width: 180 },
   { title: `状态:0=正常,1=停用,2=草稿`, colKey: 'status', align: 'center' },
   { title: `商品名称`, colKey: 'commodityTitle', align: 'center' },
   { title: `商品编码`, colKey: 'commodityCode', align: 'center' },

@@ -2,9 +2,14 @@
   <t-card>
     <t-space direction="vertical" style="width: 100%">
       <t-form v-show="showSearch" ref="queryRef" :data="queryParams" layout="inline" reset-type="initial" label-width="calc(4em + 12px)">
-        <t-form-item label="状态:0=正常,1=停用,2=草稿" name="status">
-          <t-select v-model="queryParams.status" placeholder="请选择状态:0=正常,1=停用,2=草稿" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="状态" name="status">
+          <t-select v-model="queryParams.status" placeholder="请选择状态" clearable>
+            <t-option
+              v-for="dict in general_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
         <t-form-item label="成就标题" name="achievementTitle">
@@ -147,9 +152,14 @@
           scroll-to-first-error="smooth"
           @submit="submitForm"
         >
-          <t-form-item label="状态:0=正常,1=停用,2=草稿" name="status">
+          <t-form-item label="状态" name="status">
             <t-radio-group v-model="form.status">
-              <t-radio value="1">请选择字典生成</t-radio>
+              <t-radio
+                v-for="dict in general_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-radio>
             </t-radio-group>
           </t-form-item>
           <t-form-item label="成就标题" name="achievementTitle">
@@ -200,9 +210,9 @@
     >
       <my-descriptions :loading="openViewLoading">
         <t-descriptions-item label="">{{ form.achievementBadgeId }}</t-descriptions-item>
-        <t-descriptions-item label="">{{ parseTime(form.createTime) }}</t-descriptions-item>
-        <t-descriptions-item label="">{{ parseTime(form.updateTime) }}</t-descriptions-item>
-        <t-descriptions-item label="状态:0=正常,1=停用,2=草稿">{{ form.status }}</t-descriptions-item>
+        <t-descriptions-item label="创建时间">{{ parseTime(form.createTime) }}</t-descriptions-item>
+        <t-descriptions-item label="更新时间">{{ parseTime(form.updateTime) }}</t-descriptions-item>
+        <t-descriptions-item label="状态">{{ form.status }}</t-descriptions-item>
         <t-descriptions-item label="成就标题">{{ form.achievementTitle }}</t-descriptions-item>
         <t-descriptions-item label="成就副标题">{{ form.achievementSubtitle }}</t-descriptions-item>
         <t-descriptions-item label="成就描述">{{ form.achievementDescribe }}</t-descriptions-item>
@@ -240,6 +250,7 @@ import type { PetAchievementBadgeForm, PetAchievementBadgeQuery, PetAchievementB
 import { listAchievementBadge, getAchievementBadge, delAchievementBadge, addAchievementBadge, updateAchievementBadge } from '@/api/petFriendly/achievementBadge';
 
 const { proxy } = getCurrentInstance();
+const { general_status } = proxy.useDict('general_status');
 
 const openView = ref(false);
 const openViewLoading = ref(false);
@@ -267,9 +278,9 @@ const rules = ref<Record<string, Array<FormRule>>>({
 // 列显隐信息
 const columns = ref<Array<PrimaryTableCol>>([
   { title: `选择列`, colKey: 'row-select', type: 'multiple', width: 50, align: 'center' },
-  { title: ``, colKey: 'createTime', align: 'center', minWidth: 112, width: 180 },
-  { title: ``, colKey: 'updateTime', align: 'center', minWidth: 112, width: 180 },
-  { title: `状态:0=正常,1=停用,2=草稿`, colKey: 'status', align: 'center' },
+  { title: `创建时间`, colKey: 'createTime', align: 'center', minWidth: 112, width: 180 },
+  { title: `更新时间`, colKey: 'updateTime', align: 'center', minWidth: 112, width: 180 },
+  { title: `状态`, colKey: 'status', align: 'center' },
   { title: `成就标题`, colKey: 'achievementTitle', align: 'center' },
   { title: `成就副标题`, colKey: 'achievementSubtitle', align: 'center' },
   { title: `成就描述`, colKey: 'achievementDescribe', align: 'center' },

@@ -2,24 +2,41 @@
   <t-card>
     <t-space direction="vertical" style="width: 100%">
       <t-form v-show="showSearch" ref="queryRef" :data="queryParams" layout="inline" reset-type="initial" label-width="calc(4em + 12px)">
-        <t-form-item label="状态:0=正常,1=停用,2=建设中,3=试运行" name="status">
-          <t-select v-model="queryParams.status" placeholder="请选择状态:0=正常,1=停用,2=建设中,3=试运行" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="状态" name="status">
+          <t-select v-model="queryParams.status" placeholder="请选择状态" clearable>
+            <t-option
+              v-for="dict in pet_friendly_place_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
         <t-form-item label="场所名称" name="name">
           <t-input v-model="queryParams.name" placeholder="请输入场所名称" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="场所类型: 0=宠物公园,1=宠物医院,2=宠物友好餐厅,3=饮水点,4=小草坪,5=公开广场,6=派出所,7=宠物摄影,8=宠物美容,9=寄养" name="type">
-          <t-select v-model="queryParams.type" placeholder="请选择场所类型: 0=宠物公园,1=宠物医院,2=宠物友好餐厅,3=饮水点,4=小草坪,5=公开广场,6=派出所,7=宠物摄影,8=宠物美容,9=寄养" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="场所类型" name="type">
+          <t-select v-model="queryParams.type" placeholder="请选择场所类型" clearable>
+            <t-option
+              v-for="dict in pet_friendly_place_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
         <t-form-item label="综合评分" name="rate">
           <t-input v-model="queryParams.rate" placeholder="请输入综合评分" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="友好度: 1=很友好,2=友好,3=一般,4=不友好,5=未知" name="placeLevel">
-          <t-input v-model="queryParams.placeLevel" placeholder="请输入友好度: 1=很友好,2=友好,3=一般,4=不友好,5=未知" clearable @enter="handleQuery" />
+        <t-form-item label="友好度" name="placeLevel">
+          <t-select v-model="queryParams.placeLevel" placeholder="请选择友好度" clearable>
+            <t-option
+              v-for="dict in pet_friendly_place_place_level"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
+          </t-select>
         </t-form-item>
         <t-form-item label="所属省份" name="proviceCode">
           <t-input v-model="queryParams.proviceCode" placeholder="请输入所属省份" clearable @enter="handleQuery" />
@@ -167,24 +184,41 @@
           scroll-to-first-error="smooth"
           @submit="submitForm"
         >
-          <t-form-item label="状态:0=正常,1=停用,2=建设中,3=试运行" name="status">
+          <t-form-item label="状态" name="status">
             <t-radio-group v-model="form.status">
-              <t-radio value="1">请选择字典生成</t-radio>
+              <t-radio
+                v-for="dict in pet_friendly_place_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-radio>
             </t-radio-group>
           </t-form-item>
           <t-form-item label="场所名称" name="name">
             <t-input v-model="form.name" placeholder="请输入场所名称" clearable />
           </t-form-item>
-          <t-form-item label="场所类型: 0=宠物公园,1=宠物医院,2=宠物友好餐厅,3=饮水点,4=小草坪,5=公开广场,6=派出所,7=宠物摄影,8=宠物美容,9=寄养" name="type">
-            <t-select v-model="form.type" placeholder="请选择场所类型: 0=宠物公园,1=宠物医院,2=宠物友好餐厅,3=饮水点,4=小草坪,5=公开广场,6=派出所,7=宠物摄影,8=宠物美容,9=寄养" clearable>
-              <t-option label="请选择字典生成" value="" />
-            </t-select>
+          <t-form-item label="场所类型" name="type">
+            <t-radio-group v-model="form.type">
+              <t-radio
+                v-for="dict in pet_friendly_place_type"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-radio>
+            </t-radio-group>
           </t-form-item>
           <t-form-item label="综合评分" name="rate">
             <t-input-number v-model="form.rate" placeholder="请输入" />
           </t-form-item>
-          <t-form-item label="友好度: 1=很友好,2=友好,3=一般,4=不友好,5=未知" name="placeLevel">
-            <t-input-number v-model="form.placeLevel" placeholder="请输入" />
+          <t-form-item label="友好度" name="placeLevel">
+            <t-radio-group v-model="queryParams.placeLevel">
+              <t-radio
+                v-for="dict in pet_friendly_place_place_level"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-radio>
+            </t-radio-group>
           </t-form-item>
           <t-form-item label="所属省份" name="proviceCode">
             <t-input v-model="form.proviceCode" placeholder="请输入所属省份" clearable />
@@ -240,13 +274,13 @@
     >
       <my-descriptions :loading="openViewLoading">
         <t-descriptions-item label="">{{ form.placeId }}</t-descriptions-item>
-        <t-descriptions-item label="">{{ parseTime(form.createTime) }}</t-descriptions-item>
-        <t-descriptions-item label="">{{ parseTime(form.updateTime) }}</t-descriptions-item>
-        <t-descriptions-item label="状态:0=正常,1=停用,2=建设中,3=试运行">{{ form.status }}</t-descriptions-item>
+        <t-descriptions-item label="创建时间">{{ parseTime(form.createTime) }}</t-descriptions-item>
+        <t-descriptions-item label="更新时间">{{ parseTime(form.updateTime) }}</t-descriptions-item>
+        <t-descriptions-item label="状态">{{ form.status }}</t-descriptions-item>
         <t-descriptions-item label="场所名称">{{ form.name }}</t-descriptions-item>
-        <t-descriptions-item label="场所类型: 0=宠物公园,1=宠物医院,2=宠物友好餐厅,3=饮水点,4=小草坪,5=公开广场,6=派出所,7=宠物摄影,8=宠物美容,9=寄养">{{ form.type }}</t-descriptions-item>
+        <t-descriptions-item label="场所类型">{{ form.type }}</t-descriptions-item>
         <t-descriptions-item label="综合评分">{{ form.rate }}</t-descriptions-item>
-        <t-descriptions-item label="友好度: 1=很友好,2=友好,3=一般,4=不友好,5=未知">{{ form.placeLevel }}</t-descriptions-item>
+        <t-descriptions-item label="友好度">{{ form.placeLevel }}</t-descriptions-item>
         <t-descriptions-item label="所属省份">{{ form.proviceCode }}</t-descriptions-item>
         <t-descriptions-item label="所属城市">{{ form.cityCode }}</t-descriptions-item>
         <t-descriptions-item label="所属区县">{{ form.districtCode }}</t-descriptions-item>
@@ -286,6 +320,7 @@ import type { PetFriendlyPlaceForm, PetFriendlyPlaceQuery, PetFriendlyPlaceVo } 
 import { listFriendlyPlace, getFriendlyPlace, delFriendlyPlace, addFriendlyPlace, updateFriendlyPlace } from '@/api/petFriendly/friendlyPlace';
 
 const { proxy } = getCurrentInstance();
+const { pet_friendly_place_type, pet_friendly_place_status, pet_friendly_place_place_level } = proxy.useDict('pet_friendly_place_type', 'pet_friendly_place_status', 'pet_friendly_place_place_level');
 
 const openView = ref(false);
 const openViewLoading = ref(false);
@@ -305,7 +340,7 @@ const multiple = ref(true);
 // 校验规则
 const rules = ref<Record<string, Array<FormRule>>>({
   name: [{ required: true, message: '场所名称不能为空' }, { max: 100, message: '场所名称不能超过100个字符' }],
-  type: [{ required: true, message: '场所类型: 0=宠物公园,1=宠物医院,2=宠物友好餐厅,3=饮水点,4=小草坪,5=公开广场,6=派出所,7=宠物摄影,8=宠物美容,9=寄养不能为空' }],
+  type: [{ required: true, message: '场所类型不能为空' }],
   proviceCode: [{ max: 20, message: '所属省份不能超过20个字符' }],
   cityCode: [{ max: 20, message: '所属城市不能超过20个字符' }],
   districtCode: [{ max: 20, message: '所属区县不能超过20个字符' }],
@@ -317,13 +352,13 @@ const rules = ref<Record<string, Array<FormRule>>>({
 // 列显隐信息
 const columns = ref<Array<PrimaryTableCol>>([
   { title: `选择列`, colKey: 'row-select', type: 'multiple', width: 50, align: 'center' },
-  { title: ``, colKey: 'createTime', align: 'center', minWidth: 112, width: 180 },
-  { title: ``, colKey: 'updateTime', align: 'center', minWidth: 112, width: 180 },
-  { title: `状态:0=正常,1=停用,2=建设中,3=试运行`, colKey: 'status', align: 'center' },
+  { title: `创建时间`, colKey: 'createTime', align: 'center', minWidth: 112, width: 180 },
+  { title: `更新时间`, colKey: 'updateTime', align: 'center', minWidth: 112, width: 180 },
+  { title: `状态`, colKey: 'status', align: 'center' },
   { title: `场所名称`, colKey: 'name', align: 'center' },
-  { title: `场所类型: 0=宠物公园,1=宠物医院,2=宠物友好餐厅,3=饮水点,4=小草坪,5=公开广场,6=派出所,7=宠物摄影,8=宠物美容,9=寄养`, colKey: 'type', align: 'center' },
+  { title: `场所类型`, colKey: 'type', align: 'center' },
   { title: `综合评分`, colKey: 'rate', align: 'center' },
-  { title: `友好度: 1=很友好,2=友好,3=一般,4=不友好,5=未知`, colKey: 'placeLevel', align: 'center' },
+  { title: `友好度`, colKey: 'placeLevel', align: 'center' },
   { title: `所属省份`, colKey: 'proviceCode', align: 'center' },
   { title: `所属城市`, colKey: 'cityCode', align: 'center' },
   { title: `所属区县`, colKey: 'districtCode', align: 'center' },

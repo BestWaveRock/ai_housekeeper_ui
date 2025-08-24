@@ -64,9 +64,9 @@ export interface PetAchievementBadgeForm {
 export interface PetAchievementBadgeVo {
   /**  */
   achievementBadgeId?: number;
-  /**  */
+  /** 创建时间 */
   createTime?: any;
-  /**  */
+  /** 更新时间 */
   updateTime?: any;
   /** 状态:0=正常,1=停用,2=草稿 */
   status?: number;

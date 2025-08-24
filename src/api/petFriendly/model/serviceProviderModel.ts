@@ -128,9 +128,9 @@ export interface PetServiceProviderForm {
 export interface PetServiceProviderVo {
   /**  */
   providerId?: number;
-  /**  */
+  /** 创建时间 */
   createTime?: any;
-  /**  */
+  /** 更新时间 */
   updateTime?: any;
   /** 状态:0=正常,1=停用,2=草稿,3=审批中 */
   status?: number;

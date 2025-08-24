@@ -128,9 +128,9 @@ export interface PetOwnerAssetsRecordForm {
 export interface PetOwnerAssetsRecordVo {
   /**  */
   ownerAssetsRecordId?: number;
-  /**  */
+  /** 创建时间 */
   createTime?: any;
-  /**  */
+  /** 更新时间 */
   updateTime?: any;
   /** 状态:0=正常,1=停用,2=待支付,3=待发货 */
   status?: number;
