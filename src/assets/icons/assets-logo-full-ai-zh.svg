@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1em" height="0.24em" viewBox="0 0 200 20" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- 更纯净的商务渐变 -->
+        <linearGradient id="gradAI" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%"  stop-color="#0EA5E9"/>
+            <stop offset="100%" stop-color="#3B82F6"/>
+        </linearGradient>
+
+        <linearGradient id="gradText" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%"  stop-color="#00FFFF"/>
+            <stop offset="100%" stop-color="#FFF000"/>
+        </linearGradient>
+
+        <linearGradient id="white" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%"  stop-color="#3B82F6"/>
+            <stop offset="100%" stop-color="#00FFFF"/>
+        </linearGradient>
+
+        <!-- 柔和长阴影 -->
+        <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+            <feDropShadow dx="2" dy="2" stdDeviation="2" flood-color="#000" flood-opacity=".15"/>
+        </filter>
+    </defs>
+
+
+    <!-- 极简机器人小圆点 -->
+    <circle cx="46" cy="6" r="2.5" fill="url(#gradAI)" />
+    <circle cx="63" cy="6" r="2.5" fill="url(#gradAI)" />
+    <!-- 极简房屋图标 -->
+    <g transform="translate(48,2) scale(.9)" fill="url(#gradAI)" filter="url(#softShadow)">
+        <path d="M0  14 L7  6 L14 14 L14 20 L0 20 Z" />          <!-- 屋体 -->
+        <path d="M2 14 L2 18 L6 18 L6 14 Z M8 14 L8 18 L12 18 L12 14 Z" /> <!-- 门窗 -->
+    </g>
+
+    <!-- 主题文字 -->
+    <text x="80" y="20" font-size="24" font-weight="700"
+          font-family="Inter,-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif"
+          fill="url(#white)" filter="url(#softShadow)" letter-spacing="1">
+        AI 管家
+    </text>
+</svg>
