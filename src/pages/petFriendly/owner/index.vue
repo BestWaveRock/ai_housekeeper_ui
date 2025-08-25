@@ -2,22 +2,37 @@
   <t-card>
     <t-space direction="vertical" style="width: 100%">
       <t-form v-show="showSearch" ref="queryRef" :data="queryParams" layout="inline" reset-type="initial" label-width="calc(4em + 12px)">
-        <t-form-item label="状态:0=正常,1=停用" name="status">
-          <t-select v-model="queryParams.status" placeholder="请选择状态:0=正常,1=停用" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="状态" name="status">
+          <t-select v-model="queryParams.status" placeholder="请选择状态" clearable>
+            <t-option
+              v-for="dict in general_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
-        <t-form-item label="类型:0=主人,1=救助人,2=服务商服务人员" name="ownerType">
-          <t-select v-model="queryParams.ownerType" placeholder="请选择类型:0=主人,1=救助人,2=服务商服务人员" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="类型" name="ownerType">
+          <t-select v-model="queryParams.ownerType" placeholder="请选择类型" clearable>
+            <t-option
+              v-for="dict in pet_owner_owner_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
         <t-form-item label="主人昵称" name="name">
           <t-input v-model="queryParams.name" placeholder="请输入主人昵称" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="性别:0=未填写,1=男,2=女,3=保密" name="sex">
-          <t-select v-model="queryParams.sex" placeholder="请选择性别:0=未填写,1=男,2=女,3=保密" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="性别" name="sex">
+          <t-select v-model="queryParams.sex" placeholder="请选择性别" clearable>
+            <t-option
+              v-for="dict in pet_owner_sex"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
         <t-form-item label="生日" name="birthday">
@@ -168,6 +183,15 @@
             </t-col>
           </t-row>
         </template>
+        <template #status="{ row }">
+          <dict-tag :options="general_status" :value="row.status" />
+        </template>
+        <template #ownerType="{ row }">
+          <dict-tag :options="pet_owner_owner_type" :value="row.ownerType" />
+        </template>
+        <template #sex="{ row }">
+          <dict-tag :options="pet_owner_sex" :value="row.sex" />
+        </template>
         <template #operation="{ row }">
           <t-space :size="8" break-line>
             <my-link v-hasPermi="['petFriendly:owner:query']" @click.stop="handleDetail(row)">
@@ -190,7 +214,7 @@
       :header="title"
       destroy-on-close
       :close-on-overlay-click="false"
-      width="min(500px, 100%)"
+      width="min(800px, 100%)"
       attach="body"
       :confirm-btn="{
         loading: buttonLoading,
@@ -207,22 +231,37 @@
           scroll-to-first-error="smooth"
           @submit="submitForm"
         >
-          <t-form-item label="状态:0=正常,1=停用" name="status">
+          <t-form-item label="状态" name="status">
             <t-radio-group v-model="form.status">
-              <t-radio value="1">请选择字典生成</t-radio>
+              <t-radio
+                v-for="dict in general_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-radio>
             </t-radio-group>
           </t-form-item>
-          <t-form-item label="类型:0=主人,1=救助人,2=服务商服务人员" name="ownerType">
-            <t-select v-model="form.ownerType" placeholder="请选择类型:0=主人,1=救助人,2=服务商服务人员" clearable>
-              <t-option label="请选择字典生成" value="" />
+          <t-form-item label="类型" name="ownerType">
+            <t-select v-model="form.ownerType" placeholder="请选择类型" clearable>
+              <t-option
+              v-for="dict in pet_owner_owner_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
             </t-select>
           </t-form-item>
           <t-form-item label="主人昵称" name="name">
             <t-input v-model="form.name" placeholder="请输入主人昵称" clearable />
           </t-form-item>
-          <t-form-item label="性别:0=未填写,1=男,2=女,3=保密" name="sex">
-            <t-select v-model="form.sex" placeholder="请选择性别:0=未填写,1=男,2=女,3=保密" clearable>
-              <t-option label="请选择字典生成" value="" />
+          <t-form-item label="性别" name="sex">
+            <t-select v-model="form.sex" placeholder="请选择性别" clearable>
+              <t-option
+              v-for="dict in pet_owner_sex"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
             </t-select>
           </t-form-item>
           <t-form-item label="生日" name="birthday">
@@ -320,13 +359,19 @@
       :footer="false"
     >
       <my-descriptions :loading="openViewLoading">
-        <t-descriptions-item label="">{{ form.ownerId }}</t-descriptions-item>
+        <t-descriptions-item label="ID">{{ form.ownerId }}</t-descriptions-item>
         <t-descriptions-item label="创建时间">{{ parseTime(form.createTime) }}</t-descriptions-item>
         <t-descriptions-item label="更新时间">{{ parseTime(form.updateTime) }}</t-descriptions-item>
-        <t-descriptions-item label="状态:0=正常,1=停用">{{ form.status }}</t-descriptions-item>
-        <t-descriptions-item label="类型:0=主人,1=救助人,2=服务商服务人员">{{ form.ownerType }}</t-descriptions-item>
+        <t-descriptions-item label="状态">
+          <dict-tag :options="general_status" :value="form.status" />
+        </t-descriptions-item>
+        <t-descriptions-item label="类型">
+          <dict-tag :options="pet_owner_owner_type" :value="form.ownerType" />
+        </t-descriptions-item>
         <t-descriptions-item label="主人昵称">{{ form.name }}</t-descriptions-item>
-        <t-descriptions-item label="性别:0=未填写,1=男,2=女,3=保密">{{ form.sex }}</t-descriptions-item>
+        <t-descriptions-item label="性别">
+          <dict-tag :options="pet_owner_sex" :value="form.sex" />
+        </t-descriptions-item>
         <t-descriptions-item label="生日">{{ parseTime(form.birthday) }}</t-descriptions-item>
         <t-descriptions-item label="头像">{{ form.petAvatar }}</t-descriptions-item>
         <t-descriptions-item label="所属省份">{{ form.proviceCode }}</t-descriptions-item>
@@ -338,7 +383,7 @@
         <t-descriptions-item label="联系人昵称">{{ form.contactName }}</t-descriptions-item>
         <t-descriptions-item label="联系方式">{{ form.contactInformation }}</t-descriptions-item>
         <t-descriptions-item label="联系人地址">{{ form.contactAddress }}</t-descriptions-item>
-        <t-descriptions-item label="爱心等级">{{ form.loveLevel }}</t-descriptions-item>
+        <t-descriptions-item label="爱心等级">Lv.{{ form.loveLevel }}</t-descriptions-item>
         <t-descriptions-item label="爱心值">{{ form.loveValue }}</t-descriptions-item>
         <t-descriptions-item label="积分金币值">{{ form.integralValue }}</t-descriptions-item>
         <t-descriptions-item label="成就总数">{{ form.achievementNum }}</t-descriptions-item>
@@ -378,6 +423,7 @@ import type { PetOwnerForm, PetOwnerQuery, PetOwnerVo } from '@/api/petFriendly/
 import { listOwner, getOwner, delOwner, addOwner, updateOwner } from '@/api/petFriendly/owner';
 
 const { proxy } = getCurrentInstance();
+const { general_status, pet_owner_owner_type, pet_owner_sex } = proxy.useDict('general_status', 'pet_owner_owner_type', 'pet_owner_sex');
 
 const openView = ref(false);
 const openViewLoading = ref(false);
@@ -414,10 +460,10 @@ const columns = ref<Array<PrimaryTableCol>>([
   { title: `选择列`, colKey: 'row-select', type: 'multiple', width: 50, align: 'center' },
   { title: `创建时间`, colKey: 'createTime', align: 'center', minWidth: 112, width: 180 },
   { title: `更新时间`, colKey: 'updateTime', align: 'center', minWidth: 112, width: 180 },
-  { title: `状态:0=正常,1=停用`, colKey: 'status', align: 'center' },
-  { title: `类型:0=主人,1=救助人,2=服务商服务人员`, colKey: 'ownerType', align: 'center' },
+  { title: `状态`, colKey: 'status', align: 'center' },
+  { title: `类型`, colKey: 'ownerType', align: 'center' },
   { title: `主人昵称`, colKey: 'name', align: 'center' },
-  { title: `性别:0=未填写,1=男,2=女,3=保密`, colKey: 'sex', align: 'center' },
+  { title: `性别`, colKey: 'sex', align: 'center' },
   { title: `生日`, colKey: 'birthday', align: 'center', minWidth: 112, width: 180 },
   { title: `头像`, colKey: 'petAvatar', align: 'center' },
   { title: `所属省份`, colKey: 'proviceCode', align: 'center' },

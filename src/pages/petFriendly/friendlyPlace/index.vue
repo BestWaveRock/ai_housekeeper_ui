@@ -26,7 +26,7 @@
           </t-select>
         </t-form-item>
         <t-form-item label="综合评分" name="rate">
-          <t-input v-model="queryParams.rate" placeholder="请输入综合评分" clearable @enter="handleQuery" />
+          <t-input v-model="queryParams.rate" placeholder="请输入综合评分" :min="0" :max="5" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="友好度" name="placeLevel">
           <t-select v-model="queryParams.placeLevel" placeholder="请选择友好度" clearable>
@@ -145,6 +145,15 @@
             </t-col>
           </t-row>
         </template>
+        <template #status="{ row }">
+          <dict-tag :options="pet_friendly_place_status" :value="row.status" />
+        </template>
+        <template #type="{ row }">
+          <dict-tag :options="pet_friendly_place_type" :value="row.type" />
+        </template>
+        <template #placeLevel="{ row }">
+          <dict-tag :options="pet_friendly_place_place_level" :value="row.placeLevel" />
+        </template>
         <template #operation="{ row }">
           <t-space :size="8" break-line>
             <my-link v-hasPermi="['petFriendly:friendlyPlace:query']" @click.stop="handleDetail(row)">
@@ -167,7 +176,7 @@
       :header="title"
       destroy-on-close
       :close-on-overlay-click="false"
-      width="min(500px, 100%)"
+      width="min(800px, 100%)"
       attach="body"
       :confirm-btn="{
         loading: buttonLoading,
@@ -208,7 +217,7 @@
             </t-radio-group>
           </t-form-item>
           <t-form-item label="综合评分" name="rate">
-            <t-input-number v-model="form.rate" placeholder="请输入" />
+            <t-input-number v-model="form.rate" :min="0" :max="5" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="友好度" name="placeLevel">
             <t-radio-group v-model="queryParams.placeLevel">
@@ -230,10 +239,10 @@
             <t-input v-model="form.districtCode" placeholder="请输入所属区县" clearable />
           </t-form-item>
           <t-form-item label="经度" name="longitude">
-            <t-input-number v-model="form.longitude" placeholder="请输入" />
+            <t-input v-model="form.longitude" placeholder="请输入经度" />
           </t-form-item>
           <t-form-item label="纬度" name="latitude">
-            <t-input-number v-model="form.latitude" placeholder="请输入" />
+            <t-input v-model="form.latitude" placeholder="请输入纬度" />
           </t-form-item>
           <t-form-item label="备注" name="remark">
             <t-input v-model="form.remark" placeholder="请输入备注" clearable />
@@ -273,14 +282,20 @@
       :footer="false"
     >
       <my-descriptions :loading="openViewLoading">
-        <t-descriptions-item label="">{{ form.placeId }}</t-descriptions-item>
+        <t-descriptions-item label="ID">{{ form.placeId }}</t-descriptions-item>
         <t-descriptions-item label="创建时间">{{ parseTime(form.createTime) }}</t-descriptions-item>
         <t-descriptions-item label="更新时间">{{ parseTime(form.updateTime) }}</t-descriptions-item>
-        <t-descriptions-item label="状态">{{ form.status }}</t-descriptions-item>
+        <t-descriptions-item label="状态">
+          <dict-tag :options="pet_friendly_place_status" :value="form.status" />
+        </t-descriptions-item>
         <t-descriptions-item label="场所名称">{{ form.name }}</t-descriptions-item>
-        <t-descriptions-item label="场所类型">{{ form.type }}</t-descriptions-item>
+        <t-descriptions-item label="场所类型">
+          <dict-tag :options="pet_friendly_place_type" :value="form.type" />
+        </t-descriptions-item>
         <t-descriptions-item label="综合评分">{{ form.rate }}</t-descriptions-item>
-        <t-descriptions-item label="友好度">{{ form.placeLevel }}</t-descriptions-item>
+        <t-descriptions-item label="友好度">
+          <dict-tag :options="pet_friendly_place_place_level" :value="form.placeLevel" />
+        </t-descriptions-item>
         <t-descriptions-item label="所属省份">{{ form.proviceCode }}</t-descriptions-item>
         <t-descriptions-item label="所属城市">{{ form.cityCode }}</t-descriptions-item>
         <t-descriptions-item label="所属区县">{{ form.districtCode }}</t-descriptions-item>

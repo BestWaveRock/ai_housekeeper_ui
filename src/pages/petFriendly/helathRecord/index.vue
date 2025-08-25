@@ -2,9 +2,14 @@
   <t-card>
     <t-space direction="vertical" style="width: 100%">
       <t-form v-show="showSearch" ref="queryRef" :data="queryParams" layout="inline" reset-type="initial" label-width="calc(4em + 12px)">
-        <t-form-item label="状态:0=正常,1=停用,2=草稿" name="status">
-          <t-select v-model="queryParams.status" placeholder="请选择状态:0=正常,1=停用,2=草稿" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="状态" name="status">
+          <t-select v-model="queryParams.status" placeholder="请选择状态" clearable>
+            <t-option
+              v-for="dict in general_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
         <t-form-item label="主人id" name="ownerId">
@@ -28,9 +33,14 @@
         <t-form-item label="服务商人员用户id" name="providerUserId">
           <t-input v-model="queryParams.providerUserId" placeholder="请输入服务商人员用户id" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="档案类型:0=体检,1=门诊,2=住院,3=绝育,4=美容,5=驱虫(内驱),6=驱虫(外驱),7=洗护护理,8=疫苗,9=狂犬" name="type">
-          <t-select v-model="queryParams.type" placeholder="请选择档案类型:0=体检,1=门诊,2=住院,3=绝育,4=美容,5=驱虫(内驱),6=驱虫(外驱),7=洗护护理,8=疫苗,9=狂犬" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="档案类型" name="type">
+          <t-select v-model="queryParams.type" placeholder="请选择档案类型" clearable>
+            <t-option
+              v-for="dict in pet_helath_record_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
         <t-form-item label="档案简介" name="comments">
@@ -148,6 +158,12 @@
             </t-col>
           </t-row>
         </template>
+        <template #status="{ row }">
+          <dict-tag :options="general_status" :value="row.status" />
+        </template>
+        <template #type="{ row }">
+          <dict-tag :options="pet_helath_record_type" :value="row.type" />
+        </template>
         <template #operation="{ row }">
           <t-space :size="8" break-line>
             <my-link v-hasPermi="['petFriendly:helathRecord:query']" @click.stop="handleDetail(row)">
@@ -170,7 +186,7 @@
       :header="title"
       destroy-on-close
       :close-on-overlay-click="false"
-      width="min(500px, 100%)"
+      width="min(800px, 100%)"
       attach="body"
       :confirm-btn="{
         loading: buttonLoading,
@@ -187,9 +203,14 @@
           scroll-to-first-error="smooth"
           @submit="submitForm"
         >
-          <t-form-item label="状态:0=正常,1=停用,2=草稿" name="status">
+          <t-form-item label="状态" name="status">
             <t-radio-group v-model="form.status">
-              <t-radio value="1">请选择字典生成</t-radio>
+              <t-radio
+                v-for="dict in general_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-radio>
             </t-radio-group>
           </t-form-item>
           <t-form-item label="主人id" name="ownerId">
@@ -213,9 +234,14 @@
           <t-form-item label="服务商人员用户id" name="providerUserId">
             <t-input-number v-model="form.providerUserId" placeholder="请输入" />
           </t-form-item>
-          <t-form-item label="档案类型:0=体检,1=门诊,2=住院,3=绝育,4=美容,5=驱虫(内驱),6=驱虫(外驱),7=洗护护理,8=疫苗,9=狂犬" name="type">
-            <t-select v-model="form.type" placeholder="请选择档案类型:0=体检,1=门诊,2=住院,3=绝育,4=美容,5=驱虫(内驱),6=驱虫(外驱),7=洗护护理,8=疫苗,9=狂犬" clearable>
-              <t-option label="请选择字典生成" value="" />
+          <t-form-item label="档案类型" name="type">
+            <t-select v-model="form.type" placeholder="请选择档案类型" clearable>
+              <t-option
+                v-for="dict in pet_helath_record_type"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-option>
             </t-select>
           </t-form-item>
           <t-form-item label="档案简介" name="comments">
@@ -280,10 +306,12 @@
       :footer="false"
     >
       <my-descriptions :loading="openViewLoading">
-        <t-descriptions-item label="">{{ form.healthId }}</t-descriptions-item>
+        <t-descriptions-item label="ID">{{ form.healthId }}</t-descriptions-item>
         <t-descriptions-item label="创建时间">{{ parseTime(form.createTime) }}</t-descriptions-item>
         <t-descriptions-item label="更新时间">{{ parseTime(form.updateTime) }}</t-descriptions-item>
-        <t-descriptions-item label="状态:0=正常,1=停用,2=草稿">{{ form.status }}</t-descriptions-item>
+        <t-descriptions-item label="状态">
+          <dict-tag :options="general_status" :value="form.status" />
+        </t-descriptions-item>
         <t-descriptions-item label="主人id">{{ form.ownerId }}</t-descriptions-item>
         <t-descriptions-item label="用户id">{{ form.userId }}</t-descriptions-item>
         <t-descriptions-item label="场所id">{{ form.placeId }}</t-descriptions-item>
@@ -291,7 +319,9 @@
         <t-descriptions-item label="服务商id">{{ form.providerId }}</t-descriptions-item>
         <t-descriptions-item label="服务商人员id">{{ form.providerOwnerId }}</t-descriptions-item>
         <t-descriptions-item label="服务商人员用户id">{{ form.providerUserId }}</t-descriptions-item>
-        <t-descriptions-item label="档案类型:0=体检,1=门诊,2=住院,3=绝育,4=美容,5=驱虫(内驱),6=驱虫(外驱),7=洗护护理,8=疫苗,9=狂犬">{{ form.type }}</t-descriptions-item>
+        <t-descriptions-item label="档案类型">
+          <dict-tag :options="pet_helath_record_type" :value="form.type" />
+        </t-descriptions-item>
         <t-descriptions-item label="档案简介">{{ form.comments }}</t-descriptions-item>
         <t-descriptions-item label="档案证明" :span="2">{{ form.certificate }}</t-descriptions-item>
         <t-descriptions-item label="档案信息" :span="2">{{ form.information }}</t-descriptions-item>
@@ -332,6 +362,7 @@ import type { PetHelathRecordForm, PetHelathRecordQuery, PetHelathRecordVo } fro
 import { listHelathRecord, getHelathRecord, delHelathRecord, addHelathRecord, updateHelathRecord } from '@/api/petFriendly/helathRecord';
 
 const { proxy } = getCurrentInstance();
+const { general_status, pet_helath_record_type } = proxy.useDict('general_status', 'pet_helath_record_type');
 
 const openView = ref(false);
 const openViewLoading = ref(false);
@@ -361,7 +392,7 @@ const columns = ref<Array<PrimaryTableCol>>([
   { title: `选择列`, colKey: 'row-select', type: 'multiple', width: 50, align: 'center' },
   { title: `创建时间`, colKey: 'createTime', align: 'center', minWidth: 112, width: 180 },
   { title: `更新时间`, colKey: 'updateTime', align: 'center', minWidth: 112, width: 180 },
-  { title: `状态:0=正常,1=停用,2=草稿`, colKey: 'status', align: 'center' },
+  { title: `状态`, colKey: 'status', align: 'center' },
   { title: `主人id`, colKey: 'ownerId', align: 'center' },
   { title: `用户id`, colKey: 'userId', align: 'center' },
   { title: `场所id`, colKey: 'placeId', align: 'center' },
@@ -369,7 +400,7 @@ const columns = ref<Array<PrimaryTableCol>>([
   { title: `服务商id`, colKey: 'providerId', align: 'center' },
   { title: `服务商人员id`, colKey: 'providerOwnerId', align: 'center' },
   { title: `服务商人员用户id`, colKey: 'providerUserId', align: 'center' },
-  { title: `档案类型:0=体检,1=门诊,2=住院,3=绝育,4=美容,5=驱虫(内驱),6=驱虫(外驱),7=洗护护理,8=疫苗,9=狂犬`, colKey: 'type', align: 'center' },
+  { title: `档案类型`, colKey: 'type', align: 'center' },
   { title: `档案简介`, colKey: 'comments', align: 'center' },
   { title: `档案证明`, colKey: 'certificate', align: 'center', ellipsis: true },
   { title: `档案信息`, colKey: 'information', align: 'center', ellipsis: true },

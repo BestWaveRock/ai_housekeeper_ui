@@ -2,9 +2,14 @@
   <t-card>
     <t-space direction="vertical" style="width: 100%">
       <t-form v-show="showSearch" ref="queryRef" :data="queryParams" layout="inline" reset-type="initial" label-width="calc(4em + 12px)">
-        <t-form-item label="状态:0=正常,1=停用,2=草稿,3=审批中" name="status">
-          <t-select v-model="queryParams.status" placeholder="请选择状态:0=正常,1=停用,2=草稿,3=审批中" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="状态" name="status">
+          <t-select v-model="queryParams.status" placeholder="请选择状态" clearable>
+            <t-option
+              v-for="dict in pet_service_provider_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
         <t-form-item label="单位称呼" name="unitNick">
@@ -72,11 +77,17 @@
         <t-form-item label="单位等级" name="unitLevel">
           <t-input v-model="queryParams.unitLevel" placeholder="请输入单位等级" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="服务等级: 1=优秀,2=友好,3=一般,4=较差,5=未知" name="serviceLevel">
-          <t-input v-model="queryParams.serviceLevel" placeholder="请输入服务等级: 1=优秀,2=友好,3=一般,4=较差,5=未知" clearable @enter="handleQuery" />
+        <t-form-item label="服务等级" name="serviceLevel">
+          <t-select v-model="queryParams.serviceLevel">
+            <t-option v-for="dict in pet_service_provider_service_level"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
+          </t-select>
         </t-form-item>
         <t-form-item label="综合评分" name="rate">
-          <t-input v-model="queryParams.rate" placeholder="请输入综合评分" clearable @enter="handleQuery" />
+          <t-input v-model="queryParams.rate" placeholder="请输入综合评分" :min="0" :max="5" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="保留字端" name="ext">
           <t-input v-model="queryParams.ext" placeholder="请输入保留字端" clearable @enter="handleQuery" />
@@ -161,6 +172,12 @@
             </t-col>
           </t-row>
         </template>
+        <template #status="{ row }">
+          <dict-tag :options="pet_service_provider_status" :value="row.status" />
+        </template>
+        <template #serviceLevel="{ row }">
+          <dict-tag :options="pet_service_provider_service_level" :value="row.serviceLevel" />
+        </template>
         <template #operation="{ row }">
           <t-space :size="8" break-line>
             <my-link v-hasPermi="['petFriendly:serviceProvider:query']" @click.stop="handleDetail(row)">
@@ -183,7 +200,7 @@
       :header="title"
       destroy-on-close
       :close-on-overlay-click="false"
-      width="min(500px, 100%)"
+      width="min(800px, 100%)"
       attach="body"
       :confirm-btn="{
         loading: buttonLoading,
@@ -200,9 +217,14 @@
           scroll-to-first-error="smooth"
           @submit="submitForm"
         >
-          <t-form-item label="状态:0=正常,1=停用,2=草稿,3=审批中" name="status">
+          <t-form-item label="状态" name="status">
             <t-radio-group v-model="form.status">
-              <t-radio value="1">请选择字典生成</t-radio>
+              <t-radio
+                v-for="dict in pet_service_provider_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-radio>
             </t-radio-group>
           </t-form-item>
           <t-form-item label="单位称呼" name="unitNick">
@@ -263,19 +285,19 @@
             <t-input v-model="form.districtCode" placeholder="请输入所属区县" clearable />
           </t-form-item>
           <t-form-item label="经度" name="longitude">
-            <t-input-number v-model="form.longitude" placeholder="请输入" />
+            <t-input v-model="form.longitude" placeholder="请输入经度" />
           </t-form-item>
           <t-form-item label="纬度" name="latitude">
-            <t-input-number v-model="form.latitude" placeholder="请输入" />
+            <t-input v-model="form.latitude" placeholder="请输入纬度" />
           </t-form-item>
           <t-form-item label="单位等级" name="unitLevel">
             <t-input-number v-model="form.unitLevel" placeholder="请输入" />
           </t-form-item>
-          <t-form-item label="服务等级: 1=优秀,2=友好,3=一般,4=较差,5=未知" name="serviceLevel">
+          <t-form-item label="服务等级" name="serviceLevel">
             <t-input-number v-model="form.serviceLevel" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="综合评分" name="rate">
-            <t-input-number v-model="form.rate" placeholder="请输入" />
+            <t-input-number v-model="form.rate" :min="0" :max="5" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="备注" name="remark">
             <t-input v-model="form.remark" placeholder="请输入备注" clearable />
@@ -306,10 +328,12 @@
       :footer="false"
     >
       <my-descriptions :loading="openViewLoading">
-        <t-descriptions-item label="">{{ form.providerId }}</t-descriptions-item>
+        <t-descriptions-item label="ID">{{ form.providerId }}</t-descriptions-item>
         <t-descriptions-item label="创建时间">{{ parseTime(form.createTime) }}</t-descriptions-item>
         <t-descriptions-item label="更新时间">{{ parseTime(form.updateTime) }}</t-descriptions-item>
-        <t-descriptions-item label="状态:0=正常,1=停用,2=草稿,3=审批中">{{ form.status }}</t-descriptions-item>
+        <t-descriptions-item label="状态">
+          <dict-tag :options="pet_service_provider_status" :value="form.status" />
+        </t-descriptions-item>
         <t-descriptions-item label="单位称呼">{{ form.unitNick }}</t-descriptions-item>
         <t-descriptions-item label="单位名称">{{ form.unitName }}</t-descriptions-item>
         <t-descriptions-item label="单位工商识别号">{{ form.unitIdcard }}</t-descriptions-item>
@@ -330,7 +354,9 @@
         <t-descriptions-item label="经度">{{ form.longitude }}</t-descriptions-item>
         <t-descriptions-item label="纬度">{{ form.latitude }}</t-descriptions-item>
         <t-descriptions-item label="单位等级">{{ form.unitLevel }}</t-descriptions-item>
-        <t-descriptions-item label="服务等级: 1=优秀,2=友好,3=一般,4=较差,5=未知">{{ form.serviceLevel }}</t-descriptions-item>
+        <t-descriptions-item label="服务等级">
+          <dict-tag :options="pet_service_provider_service_level" :value="form.serviceLevel" />
+        </t-descriptions-item>
         <t-descriptions-item label="综合评分">{{ form.rate }}</t-descriptions-item>
         <t-descriptions-item label="备注">{{ form.remark }}</t-descriptions-item>
         <t-descriptions-item label="保留字端" :span="2">{{ form.ext }}</t-descriptions-item>
@@ -363,6 +389,7 @@ import type { PetServiceProviderForm, PetServiceProviderQuery, PetServiceProvide
 import { listServiceProvider, getServiceProvider, delServiceProvider, addServiceProvider, updateServiceProvider } from '@/api/petFriendly/serviceProvider';
 
 const { proxy } = getCurrentInstance();
+const { pet_service_provider_status, pet_service_provider_service_level } = proxy.useDict('pet_service_provider_status', 'pet_service_provider_service_level');
 
 const openView = ref(false);
 const openViewLoading = ref(false);
@@ -404,7 +431,7 @@ const columns = ref<Array<PrimaryTableCol>>([
   { title: `选择列`, colKey: 'row-select', type: 'multiple', width: 50, align: 'center' },
   { title: `创建时间`, colKey: 'createTime', align: 'center', minWidth: 112, width: 180 },
   { title: `更新时间`, colKey: 'updateTime', align: 'center', minWidth: 112, width: 180 },
-  { title: `状态:0=正常,1=停用,2=草稿,3=审批中`, colKey: 'status', align: 'center' },
+  { title: `状态`, colKey: 'status', align: 'center' },
   { title: `单位称呼`, colKey: 'unitNick', align: 'center' },
   { title: `单位名称`, colKey: 'unitName', align: 'center' },
   { title: `单位工商识别号`, colKey: 'unitIdcard', align: 'center' },
@@ -425,7 +452,7 @@ const columns = ref<Array<PrimaryTableCol>>([
   { title: `经度`, colKey: 'longitude', align: 'center' },
   { title: `纬度`, colKey: 'latitude', align: 'center' },
   { title: `单位等级`, colKey: 'unitLevel', align: 'center' },
-  { title: `服务等级: 1=优秀,2=友好,3=一般,4=较差,5=未知`, colKey: 'serviceLevel', align: 'center' },
+  { title: `服务等级`, colKey: 'serviceLevel', align: 'center' },
   { title: `综合评分`, colKey: 'rate', align: 'center' },
   { title: `备注`, colKey: 'remark', align: 'center' },
   { title: `保留字端`, colKey: 'ext', align: 'center', ellipsis: true },

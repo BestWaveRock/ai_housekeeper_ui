@@ -2,9 +2,14 @@
   <t-card>
     <t-space direction="vertical" style="width: 100%">
       <t-form v-show="showSearch" ref="queryRef" :data="queryParams" layout="inline" reset-type="initial" label-width="calc(4em + 12px)">
-        <t-form-item label="状态:0=正常,1=停用" name="status">
-          <t-select v-model="queryParams.status" placeholder="请选择状态:0=正常,1=停用" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="状态" name="status">
+          <t-select v-model="queryParams.status" placeholder="请选择状态" clearable>
+            <t-option
+              v-for="dict in general_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
         <t-form-item label="主人id" name="ownerId">
@@ -13,9 +18,14 @@
         <t-form-item label="用户id" name="userId">
           <t-input v-model="queryParams.userId" placeholder="请输入用户id" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="行为类型:1=浏览,2=点击" name="type">
-          <t-select v-model="queryParams.type" placeholder="请选择行为类型:1=浏览,2=点击" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="行为类型" name="type">
+          <t-select v-model="queryParams.type" placeholder="请选择行为类型" clearable>
+            <t-option
+              v-for="dict in pet_owner_behevior_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
         <t-form-item label="页面" name="page">
@@ -121,6 +131,12 @@
             </t-col>
           </t-row>
         </template>
+        <template #status="{ row }">
+          <dict-tag :options="general_status" :value="row.status" />
+        </template>
+        <template #type="{ row }">
+          <dict-tag :options="pet_owner_behevior_type" :value="row.type" />
+        </template>
         <template #operation="{ row }">
           <t-space :size="8" break-line>
             <my-link v-hasPermi="['petFriendly:ownerBehevior:query']" @click.stop="handleDetail(row)">
@@ -143,7 +159,7 @@
       :header="title"
       destroy-on-close
       :close-on-overlay-click="false"
-      width="min(500px, 100%)"
+      width="min(800px, 100%)"
       attach="body"
       :confirm-btn="{
         loading: buttonLoading,
@@ -160,9 +176,14 @@
           scroll-to-first-error="smooth"
           @submit="submitForm"
         >
-          <t-form-item label="状态:0=正常,1=停用" name="status">
+          <t-form-item label="状态" name="status">
             <t-radio-group v-model="form.status">
-              <t-radio value="1">请选择字典生成</t-radio>
+              <t-radio
+                v-for="dict in general_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-radio>
             </t-radio-group>
           </t-form-item>
           <t-form-item label="主人id" name="ownerId">
@@ -171,9 +192,14 @@
           <t-form-item label="用户id" name="userId">
             <t-input-number v-model="form.userId" placeholder="请输入" />
           </t-form-item>
-          <t-form-item label="行为类型:1=浏览,2=点击" name="type">
-            <t-select v-model="form.type" placeholder="请选择行为类型:1=浏览,2=点击" clearable>
-              <t-option label="请选择字典生成" value="" />
+          <t-form-item label="行为类型" name="type">
+            <t-select v-model="form.type" placeholder="请选择行为类型" clearable>
+              <t-option
+              v-for="dict in pet_owner_behevior_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
             </t-select>
           </t-form-item>
           <t-form-item label="页面" name="page">
@@ -226,13 +252,17 @@
       :footer="false"
     >
       <my-descriptions :loading="openViewLoading">
-        <t-descriptions-item label="">{{ form.beheviorId }}</t-descriptions-item>
+        <t-descriptions-item label="ID">{{ form.beheviorId }}</t-descriptions-item>
         <t-descriptions-item label="创建时间">{{ parseTime(form.createTime) }}</t-descriptions-item>
         <t-descriptions-item label="更新时间">{{ parseTime(form.updateTime) }}</t-descriptions-item>
-        <t-descriptions-item label="状态:0=正常,1=停用">{{ form.status }}</t-descriptions-item>
+        <t-descriptions-item label="状态">
+          <dict-tag :options="general_status" :value="form.status" />
+        </t-descriptions-item>
         <t-descriptions-item label="主人id">{{ form.ownerId }}</t-descriptions-item>
         <t-descriptions-item label="用户id">{{ form.userId }}</t-descriptions-item>
-        <t-descriptions-item label="行为类型:1=浏览,2=点击">{{ form.type }}</t-descriptions-item>
+        <t-descriptions-item label="行为类型">
+          <dict-tag :options="pet_owner_behevior_type" :value="form.type" />
+        </t-descriptions-item>
         <t-descriptions-item label="页面">{{ form.page }}</t-descriptions-item>
         <t-descriptions-item label="标题">{{ form.title }}</t-descriptions-item>
         <t-descriptions-item label="行为发生时间">{{ parseTime(form.behaviorTime) }}</t-descriptions-item>
@@ -269,6 +299,7 @@ import type { PetOwnerBeheviorForm, PetOwnerBeheviorQuery, PetOwnerBeheviorVo } 
 import { listOwnerBehevior, getOwnerBehevior, delOwnerBehevior, addOwnerBehevior, updateOwnerBehevior } from '@/api/petFriendly/ownerBehevior';
 
 const { proxy } = getCurrentInstance();
+const { general_status, pet_owner_behevior_type } = proxy.useDict('general_status', 'pet_owner_behevior_type');
 
 const openView = ref(false);
 const openViewLoading = ref(false);
@@ -299,10 +330,10 @@ const columns = ref<Array<PrimaryTableCol>>([
   { title: `选择列`, colKey: 'row-select', type: 'multiple', width: 50, align: 'center' },
   { title: `创建时间`, colKey: 'createTime', align: 'center', minWidth: 112, width: 180 },
   { title: `更新时间`, colKey: 'updateTime', align: 'center', minWidth: 112, width: 180 },
-  { title: `状态:0=正常,1=停用`, colKey: 'status', align: 'center' },
+  { title: `状态`, colKey: 'status', align: 'center' },
   { title: `主人id`, colKey: 'ownerId', align: 'center' },
   { title: `用户id`, colKey: 'userId', align: 'center' },
-  { title: `行为类型:1=浏览,2=点击`, colKey: 'type', align: 'center' },
+  { title: `行为类型`, colKey: 'type', align: 'center' },
   { title: `页面`, colKey: 'page', align: 'center' },
   { title: `标题`, colKey: 'title', align: 'center' },
   { title: `行为发生时间`, colKey: 'behaviorTime', align: 'center', minWidth: 112, width: 180 },

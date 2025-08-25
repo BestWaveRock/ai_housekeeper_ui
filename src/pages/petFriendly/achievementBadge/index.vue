@@ -113,6 +113,9 @@
             </t-col>
           </t-row>
         </template>
+        <template #status="{ row }">
+          <dict-tag :options="general_status" :value="row.status" />
+        </template>
         <template #operation="{ row }">
           <t-space :size="8" break-line>
             <my-link v-hasPermi="['petFriendly:achievementBadge:query']" @click.stop="handleDetail(row)">
@@ -135,7 +138,7 @@
       :header="title"
       destroy-on-close
       :close-on-overlay-click="false"
-      width="min(500px, 100%)"
+      width="min(800px, 100%)"
       attach="body"
       :confirm-btn="{
         loading: buttonLoading,
@@ -209,10 +212,12 @@
       :footer="false"
     >
       <my-descriptions :loading="openViewLoading">
-        <t-descriptions-item label="">{{ form.achievementBadgeId }}</t-descriptions-item>
+        <t-descriptions-item label="ID">{{ form.achievementBadgeId }}</t-descriptions-item>
         <t-descriptions-item label="创建时间">{{ parseTime(form.createTime) }}</t-descriptions-item>
         <t-descriptions-item label="更新时间">{{ parseTime(form.updateTime) }}</t-descriptions-item>
-        <t-descriptions-item label="状态">{{ form.status }}</t-descriptions-item>
+        <t-descriptions-item label="状态">
+          <dict-tag :options="general_status" :value="form.status" />
+        </t-descriptions-item>
         <t-descriptions-item label="成就标题">{{ form.achievementTitle }}</t-descriptions-item>
         <t-descriptions-item label="成就副标题">{{ form.achievementSubtitle }}</t-descriptions-item>
         <t-descriptions-item label="成就描述">{{ form.achievementDescribe }}</t-descriptions-item>

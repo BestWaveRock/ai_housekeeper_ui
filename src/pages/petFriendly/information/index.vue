@@ -2,24 +2,48 @@
   <t-card>
     <t-space direction="vertical" style="width: 100%">
       <t-form v-show="showSearch" ref="queryRef" :data="queryParams" layout="inline" reset-type="initial" label-width="calc(4em + 12px)">
-        <t-form-item label="状态:0=正常,1=停用" name="status">
-          <t-select v-model="queryParams.status" placeholder="请选择状态:0=正常,1=停用" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="状态" name="status">
+          <t-select v-model="queryParams.status" placeholder="请选择状态" clearable>
+            <t-option
+              v-for="dict in general_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
         <t-form-item label="宠物昵称" name="name">
           <t-input v-model="queryParams.name" placeholder="请输入宠物昵称" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="性别:0=未填写,1=弟弟,2=妹妹,3=保密" name="sex">
-          <t-select v-model="queryParams.sex" placeholder="请选择性别:0=未填写,1=弟弟,2=妹妹,3=保密" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="性别" name="sex">
+          <t-select v-model="queryParams.sex" placeholder="请选择性别" clearable>
+            <t-option
+              v-for="dict in pet_information_sex"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
-        <t-form-item label="宠物种类:sys_dict_type(pet_species)" name="species">
-          <t-input v-model="queryParams.species" placeholder="请输入宠物种类:sys_dict_type(pet_species)" clearable @enter="handleQuery" />
+        <t-form-item label="宠物种类" name="species">
+          <t-select v-model="queryParams.species" @change="handleSpeciesChange">
+            <t-option
+              v-for="dict in pet_information_species"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
+          </t-select>
         </t-form-item>
-        <t-form-item label="宠物品种:sys_dict_type(species_code)" name="breeds">
-          <t-input v-model="queryParams.breeds" placeholder="请输入宠物品种:sys_dict_type(species_code)" clearable @enter="handleQuery" />
+        <t-form-item label="宠物品种" name="breeds">
+          <t-select v-model="queryParams.breeds" :disabled="!queryParams.species">
+            <t-option
+              v-for="dict in breedsOptions"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
+          </t-select>
         </t-form-item>
         <t-form-item label="生日" name="birthday">
           <t-date-picker
@@ -47,9 +71,14 @@
         <t-form-item label="宠物证件号" name="petIdcard">
           <t-input v-model="queryParams.petIdcard" placeholder="请输入宠物证件号" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="联系人类型:0=主人,1=救助人" name="contactType">
-          <t-select v-model="queryParams.contactType" placeholder="请选择联系人类型:0=主人,1=救助人" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="联系人类型" name="contactType">
+          <t-select v-model="queryParams.contactType" placeholder="请选择联系人类型" clearable>
+            <t-option
+              v-for="dict in pet_owner_owner_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
         <t-form-item label="联系人id" name="contactUserId">
@@ -166,6 +195,21 @@
             </t-col>
           </t-row>
         </template>
+        <template #status="{ row }">
+          <dict-tag :options="general_status" :value="row.status" />
+        </template>
+        <template #sex="{ row }">
+          <dict-tag :options="pet_information_sex" :value="row.sex" />
+        </template>
+        <template #species="{ row }">
+          <dict-tag :options="pet_information_species" :value="row.species" />
+        </template>
+        <template #breeds="{ row }">
+          <dict-tag :options="breedsDicts[`pet_information_breeds_${row.species}`].value" :value="row.breeds" />
+        </template>
+        <template #contactType="{ row }">
+          <dict-tag :options="pet_owner_owner_type" :value="row.contactType" />
+        </template>
         <template #operation="{ row }">
           <t-space :size="8" break-line>
             <my-link v-hasPermi="['petFriendly:information:query']" @click.stop="handleDetail(row)">
@@ -188,7 +232,7 @@
       :header="title"
       destroy-on-close
       :close-on-overlay-click="false"
-      width="min(500px, 100%)"
+      width="min(800px, 100%)"
       attach="body"
       :confirm-btn="{
         loading: buttonLoading,
@@ -205,24 +249,48 @@
           scroll-to-first-error="smooth"
           @submit="submitForm"
         >
-          <t-form-item label="状态:0=正常,1=停用" name="status">
+          <t-form-item label="状态" name="status">
             <t-radio-group v-model="form.status">
-              <t-radio value="1">请选择字典生成</t-radio>
+              <t-radio
+                v-for="dict in general_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-radio>
             </t-radio-group>
           </t-form-item>
           <t-form-item label="宠物昵称" name="name">
             <t-input v-model="form.name" placeholder="请输入宠物昵称" clearable />
           </t-form-item>
-          <t-form-item label="性别:0=未填写,1=弟弟,2=妹妹,3=保密" name="sex">
-            <t-select v-model="form.sex" placeholder="请选择性别:0=未填写,1=弟弟,2=妹妹,3=保密" clearable>
-              <t-option label="请选择字典生成" value="" />
+          <t-form-item label="性别" name="sex">
+            <t-select v-model="form.sex" placeholder="请选择性别" clearable>
+              <t-option
+              v-for="dict in pet_information_sex"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
             </t-select>
           </t-form-item>
-          <t-form-item label="宠物种类:sys_dict_type(pet_species)" name="species">
-            <t-input-number v-model="form.species" placeholder="请输入" />
+          <t-form-item label="宠物种类" name="species">
+            <t-select v-model="form.species" @change="handleSpeciesInsertChange">
+              <t-option
+                v-for="dict in pet_information_species"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-option>
+            </t-select>
           </t-form-item>
-          <t-form-item label="宠物品种:sys_dict_type(species_code)" name="breeds">
-            <t-input-number v-model="form.breeds" placeholder="请输入" />
+          <t-form-item label="宠物品种" name="breeds">
+            <t-select v-model="form.breeds" :disabled="!form.species">
+              <t-option
+                v-for="dict in breedsInsertOptions"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-option>
+            </t-select>
           </t-form-item>
           <t-form-item label="生日" name="birthday">
             <t-date-picker
@@ -254,9 +322,14 @@
           <t-form-item label="宠物证件号" name="petIdcard">
             <t-input v-model="form.petIdcard" placeholder="请输入宠物证件号" clearable />
           </t-form-item>
-          <t-form-item label="联系人类型:0=主人,1=救助人" name="contactType">
-            <t-select v-model="form.contactType" placeholder="请选择联系人类型:0=主人,1=救助人" clearable>
-              <t-option label="请选择字典生成" value="" />
+          <t-form-item label="联系人类型" name="contactType">
+            <t-select v-model="form.contactType" placeholder="请选择联系人类型" clearable>
+              <t-option
+                v-for="dict in pet_owner_owner_type"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-option>
             </t-select>
           </t-form-item>
           <t-form-item label="联系人id" name="contactUserId">
@@ -318,14 +391,22 @@
       :footer="false"
     >
       <my-descriptions :loading="openViewLoading">
-        <t-descriptions-item label="">{{ form.petId }}</t-descriptions-item>
+        <t-descriptions-item label="ID">{{ form.petId }}</t-descriptions-item>
         <t-descriptions-item label="创建时间">{{ parseTime(form.createTime) }}</t-descriptions-item>
         <t-descriptions-item label="更新时间">{{ parseTime(form.updateTime) }}</t-descriptions-item>
-        <t-descriptions-item label="状态:0=正常,1=停用">{{ form.status }}</t-descriptions-item>
+        <t-descriptions-item label="状态">
+          <dict-tag :options="general_status" :value="form.status" />
+        </t-descriptions-item>
         <t-descriptions-item label="宠物昵称">{{ form.name }}</t-descriptions-item>
-        <t-descriptions-item label="性别:0=未填写,1=弟弟,2=妹妹,3=保密">{{ form.sex }}</t-descriptions-item>
-        <t-descriptions-item label="宠物种类:sys_dict_type(pet_species)">{{ form.species }}</t-descriptions-item>
-        <t-descriptions-item label="宠物品种:sys_dict_type(species_code)">{{ form.breeds }}</t-descriptions-item>
+        <t-descriptions-item label="性别">
+          <dict-tag :options="pet_information_sex" :value="form.sex" />
+        </t-descriptions-item>
+        <t-descriptions-item label="宠物种类">
+          <dict-tag :options="pet_information_species" :value="form.species" />
+        </t-descriptions-item>
+        <t-descriptions-item label="宠物品种">
+          <dict-tag :options="breedsDicts[`pet_information_breeds_${form.species}`].value" :value="form.breeds" />
+        </t-descriptions-item>
         <t-descriptions-item label="生日">{{ parseTime(form.birthday) }}</t-descriptions-item>
         <t-descriptions-item label="头像">{{ form.petAvatar }}</t-descriptions-item>
         <t-descriptions-item label="排序">{{ form.petSort }}</t-descriptions-item>
@@ -334,7 +415,9 @@
         <t-descriptions-item label="所属区县">{{ form.districtCode }}</t-descriptions-item>
         <t-descriptions-item label="备注">{{ form.remark }}</t-descriptions-item>
         <t-descriptions-item label="宠物证件号">{{ form.petIdcard }}</t-descriptions-item>
-        <t-descriptions-item label="联系人类型:0=主人,1=救助人">{{ form.contactType }}</t-descriptions-item>
+        <t-descriptions-item label="联系人类型">
+          <dict-tag :options="pet_owner_owner_type" :value="form.contactType" />
+        </t-descriptions-item>
         <t-descriptions-item label="联系人id">{{ form.contactUserId }}</t-descriptions-item>
         <t-descriptions-item label="联系人昵称">{{ form.contactName }}</t-descriptions-item>
         <t-descriptions-item label="联系方式">{{ form.contactInformation }}</t-descriptions-item>
@@ -371,7 +454,33 @@ import { ArrayOps } from '@/utils/array';
 import type { PetInformationForm, PetInformationQuery, PetInformationVo } from '@/api/petFriendly/model/informationModel';
 import { listInformation, getInformation, delInformation, addInformation, updateInformation } from '@/api/petFriendly/information';
 
+// 生成 ['pet_information_breeds_1', ... , 'pet_information_breeds_11']
+const breedsKeys = Array.from({ length: 11 }, (_, i) => `pet_information_breeds_${i + 1}`);
+
 const { proxy } = getCurrentInstance();
+const { general_status, pet_information_sex, pet_information_species, pet_owner_owner_type, ...breedsDicts } = proxy.useDict('general_status', 'pet_information_sex', 'pet_information_species', 'pet_owner_owner_type', ...breedsKeys);
+
+// 计算属性：当前种类的品种数组（裸数组）
+const breedsOptions = computed(() => {
+  const refArr = breedsDicts[`pet_information_breeds_${queryParams.value.species}`];
+  return refArr ? refArr.value : [];
+});
+
+// 计算属性：当前种类的品种数组（裸数组）
+const breedsInsertOptions = computed(() => {
+  const refArr = breedsDicts[`pet_information_breeds_${form.value.species}`];
+  return refArr ? refArr.value : [];
+});
+
+// 种类切换时把品种值清空，防止旧值不存在
+function handleSpeciesChange() {
+  queryParams.value.breeds = undefined;
+}
+function handleSpeciesInsertChange() {
+  form.value.breeds = undefined;
+}
+
+
 
 const openView = ref(false);
 const openViewLoading = ref(false);
@@ -407,11 +516,11 @@ const columns = ref<Array<PrimaryTableCol>>([
   { title: `选择列`, colKey: 'row-select', type: 'multiple', width: 50, align: 'center' },
   { title: `创建时间`, colKey: 'createTime', align: 'center', minWidth: 112, width: 180 },
   { title: `更新时间`, colKey: 'updateTime', align: 'center', minWidth: 112, width: 180 },
-  { title: `状态:0=正常,1=停用`, colKey: 'status', align: 'center' },
+  { title: `状态`, colKey: 'status', align: 'center' },
   { title: `宠物昵称`, colKey: 'name', align: 'center' },
-  { title: `性别:0=未填写,1=弟弟,2=妹妹,3=保密`, colKey: 'sex', align: 'center' },
-  { title: `宠物种类:sys_dict_type(pet_species)`, colKey: 'species', align: 'center' },
-  { title: `宠物品种:sys_dict_type(species_code)`, colKey: 'breeds', align: 'center' },
+  { title: `性别`, colKey: 'sex', align: 'center' },
+  { title: `宠物种类`, colKey: 'species', align: 'center' },
+  { title: `宠物品种`, colKey: 'breeds', align: 'center' },
   { title: `生日`, colKey: 'birthday', align: 'center', minWidth: 112, width: 180 },
   { title: `头像`, colKey: 'petAvatar', align: 'center' },
   { title: `排序`, colKey: 'petSort', align: 'center' },
@@ -420,7 +529,7 @@ const columns = ref<Array<PrimaryTableCol>>([
   { title: `所属区县`, colKey: 'districtCode', align: 'center' },
   { title: `备注`, colKey: 'remark', align: 'center' },
   { title: `宠物证件号`, colKey: 'petIdcard', align: 'center' },
-  { title: `联系人类型:0=主人,1=救助人`, colKey: 'contactType', align: 'center' },
+  { title: `联系人类型`, colKey: 'contactType', align: 'center' },
   { title: `联系人id`, colKey: 'contactUserId', align: 'center' },
   { title: `联系人昵称`, colKey: 'contactName', align: 'center' },
   { title: `联系方式`, colKey: 'contactInformation', align: 'center' },

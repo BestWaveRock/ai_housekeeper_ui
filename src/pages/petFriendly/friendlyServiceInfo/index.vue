@@ -2,17 +2,35 @@
   <t-card>
     <t-space direction="vertical" style="width: 100%">
       <t-form v-show="showSearch" ref="queryRef" :data="queryParams" layout="inline" reset-type="initial" label-width="calc(4em + 12px)">
-        <t-form-item label="状态:0=正常,1=停用" name="status">
-          <t-select v-model="queryParams.status" placeholder="请选择状态:0=正常,1=停用" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="状态" name="status">
+          <t-select v-model="queryParams.status" placeholder="请选择状态" clearable>
+            <t-option
+              v-for="dict in general_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
-        <t-form-item label="是否预约单:0=否,1=是" name="reserve">
-          <t-input v-model="queryParams.reserve" placeholder="请输入是否预约单:0=否,1=是" clearable @enter="handleQuery" />
+        <t-form-item label="是否预约单" name="reserve">
+          <!-- <t-input v-model="queryParams.reserve" placeholder="请输入是否预约单" clearable @enter="handleQuery" /> -->
+          <t-select v-model="queryParams.reserve">
+            <t-option
+              v-for="dict in pet_friendly_service_info_reserve"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
+          </t-select>
         </t-form-item>
-        <t-form-item label="服务类型: 0=门诊,1=接种,2=专车,3=护理/美容(到店),4=护理/美容(上门),5=急救,6=流浪救助,7=寄养" name="type">
-          <t-select v-model="queryParams.type" placeholder="请选择服务类型: 0=门诊,1=接种,2=专车,3=护理/美容(到店),4=护理/美容(上门),5=急救,6=流浪救助,7=寄养" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="服务类型" name="type">
+          <t-select v-model="queryParams.type" placeholder="请选择服务类型" clearable>
+            <t-option
+              v-for="dict in pet_friendly_service_info_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
         <t-form-item label="服务名称" name="title">
@@ -27,19 +45,31 @@
         <t-form-item label="服务主图" name="serviceMainPicture">
           <t-input v-model="queryParams.serviceMainPicture" placeholder="请输入服务主图" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="跳转页面类型:0=app页面,1=外部链接" name="jumpPageType">
-          <t-select v-model="queryParams.jumpPageType" placeholder="请选择跳转页面类型:0=app页面,1=外部链接" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="跳转页面类型" name="jumpPageType">
+          <t-select v-model="queryParams.jumpPageType" placeholder="请选择跳转页面类型" clearable>
+            <t-option
+              v-for="dict in pet_friendly_service_info_jump_page_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
         <t-form-item label="服务页面url" name="jumpPageUrl">
           <t-input v-model="queryParams.jumpPageUrl" placeholder="请输入服务页面url" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="服务等级: 1=优秀,2=友好,3=一般,4=较差,5=未知" name="serviceLevel">
-          <t-input v-model="queryParams.serviceLevel" placeholder="请输入服务等级: 1=优秀,2=友好,3=一般,4=较差,5=未知" clearable @enter="handleQuery" />
+        <t-form-item label="服务等级" name="serviceLevel">
+          <t-select v-model="queryParams.serviceLevel">
+            <t-option
+              v-for="dict in pet_service_provider_service_level"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
+          </t-select>
         </t-form-item>
         <t-form-item label="综合评分" name="rate">
-          <t-input v-model="queryParams.rate" placeholder="请输入综合评分" clearable @enter="handleQuery" />
+          <t-input v-model="queryParams.rate" placeholder="请输入综合评分" :min="0" :max="5" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="所属省份" name="proviceCode">
           <t-input v-model="queryParams.proviceCode" placeholder="请输入所属省份" clearable @enter="handleQuery" />
@@ -142,6 +172,21 @@
             </t-col>
           </t-row>
         </template>
+        <template #status="{ row }">
+          <dict-tag :options="general_status" :value="row.status" />
+        </template>
+        <template #reserve="{ row }">
+          <dict-tag :options="pet_friendly_service_info_reserve" :value="row.reserve" />
+        </template>
+        <template #type="{ row }">
+          <dict-tag :options="pet_friendly_service_info_type" :value="row.type" />
+        </template>
+        <template #jumpPageType="{ row }">
+          <dict-tag :options="pet_friendly_service_info_jump_page_type" :value="row.jumpPageType" />
+        </template>
+        <template #serviceLevel="{ row }">
+          <dict-tag :options="pet_service_provider_service_level" :value="row.serviceLevel" />
+        </template>
         <template #operation="{ row }">
           <t-space :size="8" break-line>
             <my-link v-hasPermi="['petFriendly:friendlyServiceInfo:query']" @click.stop="handleDetail(row)">
@@ -164,7 +209,7 @@
       :header="title"
       destroy-on-close
       :close-on-overlay-click="false"
-      width="min(500px, 100%)"
+      width="min(800px, 100%)"
       attach="body"
       :confirm-btn="{
         loading: buttonLoading,
@@ -181,18 +226,35 @@
           scroll-to-first-error="smooth"
           @submit="submitForm"
         >
-          <t-form-item label="状态:0=正常,1=停用" name="status">
+          <t-form-item label="状态" name="status">
             <t-radio-group v-model="form.status">
-              <t-radio value="1">请选择字典生成</t-radio>
+              <t-radio
+                v-for="dict in general_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-radio>
             </t-radio-group>
           </t-form-item>
-          <t-form-item label="是否预约单:0=否,1=是" name="reserve">
-            <t-input-number v-model="form.reserve" placeholder="请输入" />
+          <t-form-item label="是否预约单" name="reserve">
+            <t-radio-group v-model="form.reserve">
+              <t-radio
+                v-for="dict in pet_friendly_service_info_reserve"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-radio>
+            </t-radio-group>
           </t-form-item>
-          <t-form-item label="服务类型: 0=门诊,1=接种,2=专车,3=护理/美容(到店),4=护理/美容(上门),5=急救,6=流浪救助,7=寄养" name="type">
-            <t-select v-model="form.type" placeholder="请选择服务类型: 0=门诊,1=接种,2=专车,3=护理/美容(到店),4=护理/美容(上门),5=急救,6=流浪救助,7=寄养" clearable>
-              <t-option label="请选择字典生成" value="" />
-            </t-select>
+          <t-form-item label="服务类型" name="type">
+            <t-radio-group v-model="form.type">
+              <t-radio
+                v-for="dict in pet_friendly_service_info_type"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-radio>
+            </t-radio-group>
           </t-form-item>
           <t-form-item label="服务名称" name="title">
             <t-input v-model="form.title" placeholder="请输入服务名称" clearable />
@@ -206,19 +268,31 @@
           <t-form-item label="服务主图" name="serviceMainPicture">
             <t-input v-model="form.serviceMainPicture" placeholder="请输入服务主图" clearable />
           </t-form-item>
-          <t-form-item label="跳转页面类型:0=app页面,1=外部链接" name="jumpPageType">
-            <t-select v-model="form.jumpPageType" placeholder="请选择跳转页面类型:0=app页面,1=外部链接" clearable>
-              <t-option label="请选择字典生成" value="" />
-            </t-select>
+          <t-form-item label="跳转页面类型" name="jumpPageType">
+            <t-radio-group v-model="form.jumpPageType" placeholder="请选择跳转页面类型" clearable>
+              <t-radio
+                v-for="dict in pet_friendly_service_info_jump_page_type"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-radio>
+            </t-radio-group>
           </t-form-item>
           <t-form-item label="服务页面url" name="jumpPageUrl">
             <t-input v-model="form.jumpPageUrl" placeholder="请输入服务页面url" clearable />
           </t-form-item>
-          <t-form-item label="服务等级: 1=优秀,2=友好,3=一般,4=较差,5=未知" name="serviceLevel">
-            <t-input-number v-model="form.serviceLevel" placeholder="请输入" />
+          <t-form-item label="服务等级" name="serviceLevel">
+            <t-radio-group v-model="form.serviceLevel">
+              <t-radio
+                v-for="dict in 	pet_service_provider_service_level"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-radio>
+            </t-radio-group>
           </t-form-item>
           <t-form-item label="综合评分" name="rate">
-            <t-input-number v-model="form.rate" placeholder="请输入" />
+            <t-input-number v-model="form.rate" :min="0" :max="5" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="所属省份" name="proviceCode">
             <t-input v-model="form.proviceCode" placeholder="请输入所属省份" clearable />
@@ -267,19 +341,29 @@
       :footer="false"
     >
       <my-descriptions :loading="openViewLoading">
-        <t-descriptions-item label="">{{ form.serviceId }}</t-descriptions-item>
+        <t-descriptions-item label="ID">{{ form.serviceId }}</t-descriptions-item>
         <t-descriptions-item label="创建时间">{{ parseTime(form.createTime) }}</t-descriptions-item>
         <t-descriptions-item label="更新时间">{{ parseTime(form.updateTime) }}</t-descriptions-item>
-        <t-descriptions-item label="状态:0=正常,1=停用">{{ form.status }}</t-descriptions-item>
-        <t-descriptions-item label="是否预约单:0=否,1=是">{{ form.reserve }}</t-descriptions-item>
-        <t-descriptions-item label="服务类型: 0=门诊,1=接种,2=专车,3=护理/美容(到店),4=护理/美容(上门),5=急救,6=流浪救助,7=寄养">{{ form.type }}</t-descriptions-item>
+        <t-descriptions-item label="状态">
+          <dict-tag :options="general_status" :value="form.status" />
+        </t-descriptions-item>
+        <t-descriptions-item label="是否预约单">
+          <dict-tag :options="pet_friendly_service_info_reserve" :value="form.reserve" />
+        </t-descriptions-item>
+        <t-descriptions-item label="服务类型">
+          <dict-tag :options="pet_friendly_service_info_type" :value="form.type" />
+        </t-descriptions-item>
         <t-descriptions-item label="服务名称">{{ form.title }}</t-descriptions-item>
         <t-descriptions-item label="服务副标题">{{ form.subTitle }}</t-descriptions-item>
         <t-descriptions-item label="服务图标">{{ form.icon }}</t-descriptions-item>
         <t-descriptions-item label="服务主图">{{ form.serviceMainPicture }}</t-descriptions-item>
-        <t-descriptions-item label="跳转页面类型:0=app页面,1=外部链接">{{ form.jumpPageType }}</t-descriptions-item>
+        <t-descriptions-item label="跳转页面类型">
+          <dict-tag :options="pet_friendly_service_info_jump_page_type" :value="form.jumpPageType" />
+        </t-descriptions-item>
         <t-descriptions-item label="服务页面url">{{ form.jumpPageUrl }}</t-descriptions-item>
-        <t-descriptions-item label="服务等级: 1=优秀,2=友好,3=一般,4=较差,5=未知">{{ form.serviceLevel }}</t-descriptions-item>
+        <t-descriptions-item label="服务等级">
+          <dict-tag :options="pet_service_provider_service_level" :value="form.serviceLevel" />
+        </t-descriptions-item>
         <t-descriptions-item label="综合评分">{{ form.rate }}</t-descriptions-item>
         <t-descriptions-item label="所属省份">{{ form.proviceCode }}</t-descriptions-item>
         <t-descriptions-item label="所属城市">{{ form.cityCode }}</t-descriptions-item>
@@ -318,6 +402,7 @@ import type { PetFriendlyServiceInfoForm, PetFriendlyServiceInfoQuery, PetFriend
 import { listFriendlyServiceInfo, getFriendlyServiceInfo, delFriendlyServiceInfo, addFriendlyServiceInfo, updateFriendlyServiceInfo } from '@/api/petFriendly/friendlyServiceInfo';
 
 const { proxy } = getCurrentInstance();
+const { general_status, pet_friendly_service_info_reserve, pet_friendly_service_info_type, pet_friendly_service_info_jump_page_type, pet_service_provider_service_level } = proxy.useDict('general_status', 'pet_friendly_service_info_reserve', 'pet_friendly_service_info_type', 'pet_friendly_service_info_jump_page_type', 'pet_service_provider_service_level');
 
 const openView = ref(false);
 const openViewLoading = ref(false);
@@ -336,12 +421,12 @@ const multiple = ref(true);
 
 // 校验规则
 const rules = ref<Record<string, Array<FormRule>>>({
-  type: [{ required: true, message: '服务类型: 0=门诊,1=接种,2=专车,3=护理/美容(到店),4=护理/美容(上门),5=急救,6=流浪救助,7=寄养不能为空' }],
+  type: [{ required: true, message: '服务类型不能为空' }],
   title: [{ required: true, message: '服务名称不能为空' }, { max: 50, message: '服务名称不能超过50个字符' }],
   subTitle: [{ max: 100, message: '服务副标题不能超过100个字符' }],
   icon: [{ max: 100, message: '服务图标不能超过100个字符' }],
   serviceMainPicture: [{ max: 200, message: '服务主图不能超过200个字符' }],
-  jumpPageType: [{ max: 200, message: '跳转页面类型:0=app页面,1=外部链接不能超过200个字符' }],
+  jumpPageType: [{ max: 200, message: '跳转页面类型不能超过200个字符' }],
   jumpPageUrl: [{ max: 200, message: '服务页面url不能超过200个字符' }],
   proviceCode: [{ max: 20, message: '所属省份不能超过20个字符' }],
   cityCode: [{ max: 20, message: '所属城市不能超过20个字符' }],
@@ -356,16 +441,16 @@ const columns = ref<Array<PrimaryTableCol>>([
   { title: `选择列`, colKey: 'row-select', type: 'multiple', width: 50, align: 'center' },
   { title: `创建时间`, colKey: 'createTime', align: 'center', minWidth: 112, width: 180 },
   { title: `更新时间`, colKey: 'updateTime', align: 'center', minWidth: 112, width: 180 },
-  { title: `状态:0=正常,1=停用`, colKey: 'status', align: 'center' },
-  { title: `是否预约单:0=否,1=是`, colKey: 'reserve', align: 'center' },
-  { title: `服务类型: 0=门诊,1=接种,2=专车,3=护理/美容(到店),4=护理/美容(上门),5=急救,6=流浪救助,7=寄养`, colKey: 'type', align: 'center' },
+  { title: `状态`, colKey: 'status', align: 'center' },
+  { title: `是否预约单`, colKey: 'reserve', align: 'center' },
+  { title: `服务类型`, colKey: 'type', align: 'center' },
   { title: `服务名称`, colKey: 'title', align: 'center' },
   { title: `服务副标题`, colKey: 'subTitle', align: 'center' },
   { title: `服务图标`, colKey: 'icon', align: 'center' },
   { title: `服务主图`, colKey: 'serviceMainPicture', align: 'center' },
-  { title: `跳转页面类型:0=app页面,1=外部链接`, colKey: 'jumpPageType', align: 'center' },
+  { title: `跳转页面类型`, colKey: 'jumpPageType', align: 'center' },
   { title: `服务页面url`, colKey: 'jumpPageUrl', align: 'center' },
-  { title: `服务等级: 1=优秀,2=友好,3=一般,4=较差,5=未知`, colKey: 'serviceLevel', align: 'center' },
+  { title: `服务等级`, colKey: 'serviceLevel', align: 'center' },
   { title: `综合评分`, colKey: 'rate', align: 'center' },
   { title: `所属省份`, colKey: 'proviceCode', align: 'center' },
   { title: `所属城市`, colKey: 'cityCode', align: 'center' },

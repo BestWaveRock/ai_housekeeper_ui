@@ -2,9 +2,14 @@
   <t-card>
     <t-space direction="vertical" style="width: 100%">
       <t-form v-show="showSearch" ref="queryRef" :data="queryParams" layout="inline" reset-type="initial" label-width="calc(4em + 12px)">
-        <t-form-item label="状态:0=点击,1=填写,2=发起,3=等待派单,4=进行中,5=完成待评价,6=完成,7=服务取消,8=服务售后发起,9=售后等待分配,10=售后处理中,11=售后完成待评价,12=售后完成,13=售后取消,14=标记异常单,15=标记正常单" name="status">
-          <t-select v-model="queryParams.status" placeholder="请选择状态:0=点击,1=填写,2=发起,3=等待派单,4=进行中,5=完成待评价,6=完成,7=服务取消,8=服务售后发起,9=售后等待分配,10=售后处理中,11=售后完成待评价,12=售后完成,13=售后取消,14=标记异常单,15=标记正常单" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="状态" name="status">
+          <t-select v-model="queryParams.status" placeholder="请选择状态" clearable>
+            <t-option
+              v-for="dict in pet_service_consumer_record_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
         <t-form-item label="主人id" name="ownerId">
@@ -28,8 +33,14 @@
         <t-form-item label="服务商人员用户id" name="providerUserId">
           <t-input v-model="queryParams.providerUserId" placeholder="请输入服务商人员用户id" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="是否预约单:0=否,1=是" name="reserve">
-          <t-input v-model="queryParams.reserve" placeholder="请输入是否预约单:0=否,1=是" clearable @enter="handleQuery" />
+        <t-form-item label="是否预约单" name="reserve">
+          <t-select v-model="queryParams.reserve">
+            <t-option v-for="dict in pet_friendly_service_info_reserve"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
+          </t-select>
         </t-form-item>
         <t-form-item label="预约开始时间" name="reserveStartTime">
           <t-date-picker
@@ -55,7 +66,12 @@
         </t-form-item>
         <t-form-item label="服务类型" name="serviceType">
           <t-select v-model="queryParams.serviceType" placeholder="请选择服务类型" clearable>
-            <t-option label="请选择字典生成" value="" />
+            <t-option
+              v-for="dict in pet_friendly_service_info_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
         <t-form-item label="服务内容" name="serviceName">
@@ -189,6 +205,15 @@
             </t-col>
           </t-row>
         </template>
+        <template #status="{ row }">
+          <dict-tag :options="pet_service_consumer_record_status" :value="row.status" />
+        </template>
+        <template #reserve="{ row }">
+          <dict-tag :options="pet_friendly_service_info_reserve" :value="row.reserve" />
+        </template>
+        <template #serviceType="{ row }">
+          <dict-tag :options="pet_friendly_service_info_type" :value="row.serviceType" />
+        </template>
         <template #operation="{ row }">
           <t-space :size="8" break-line>
             <my-link v-hasPermi="['petFriendly:serviceConsumerRecord:query']" @click.stop="handleDetail(row)">
@@ -211,7 +236,7 @@
       :header="title"
       destroy-on-close
       :close-on-overlay-click="false"
-      width="min(500px, 100%)"
+      width="min(800px, 100%)"
       attach="body"
       :confirm-btn="{
         loading: buttonLoading,
@@ -228,9 +253,14 @@
           scroll-to-first-error="smooth"
           @submit="submitForm"
         >
-          <t-form-item label="状态:0=点击,1=填写,2=发起,3=等待派单,4=进行中,5=完成待评价,6=完成,7=服务取消,8=服务售后发起,9=售后等待分配,10=售后处理中,11=售后完成待评价,12=售后完成,13=售后取消,14=标记异常单,15=标记正常单" name="status">
+          <t-form-item label="状态" name="status">
             <t-radio-group v-model="form.status">
-              <t-radio value="1">请选择字典生成</t-radio>
+              <t-radio
+                v-for="dict in pet_service_consumer_record_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-radio>
             </t-radio-group>
           </t-form-item>
           <t-form-item label="主人id" name="ownerId">
@@ -254,8 +284,14 @@
           <t-form-item label="服务商人员用户id" name="providerUserId">
             <t-input-number v-model="form.providerUserId" placeholder="请输入" />
           </t-form-item>
-          <t-form-item label="是否预约单:0=否,1=是" name="reserve">
-            <t-input-number v-model="form.reserve" placeholder="请输入" />
+          <t-form-item label="是否预约单" name="reserve">
+            <t-select v-model="form.reserve">
+              <t-option v-for="dict in pet_friendly_service_info_reserve"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-option>
+            </t-select>
           </t-form-item>
           <t-form-item label="预约开始时间" name="reserveStartTime">
             <t-date-picker
@@ -283,7 +319,12 @@
           </t-form-item>
           <t-form-item label="服务类型" name="serviceType">
             <t-select v-model="form.serviceType" placeholder="请选择服务类型" clearable>
-              <t-option label="请选择字典生成" value="" />
+              <t-option
+              v-for="dict in pet_friendly_service_info_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
             </t-select>
           </t-form-item>
           <t-form-item label="服务内容" name="serviceName">
@@ -366,10 +407,12 @@
       :footer="false"
     >
       <my-descriptions :loading="openViewLoading">
-        <t-descriptions-item label="">{{ form.consumerId }}</t-descriptions-item>
+        <t-descriptions-item label="ID">{{ form.consumerId }}</t-descriptions-item>
         <t-descriptions-item label="创建时间">{{ parseTime(form.createTime) }}</t-descriptions-item>
         <t-descriptions-item label="更新时间">{{ parseTime(form.updateTime) }}</t-descriptions-item>
-        <t-descriptions-item label="状态:0=点击,1=填写,2=发起,3=等待派单,4=进行中,5=完成待评价,6=完成,7=服务取消,8=服务售后发起,9=售后等待分配,10=售后处理中,11=售后完成待评价,12=售后完成,13=售后取消,14=标记异常单,15=标记正常单">{{ form.status }}</t-descriptions-item>
+        <t-descriptions-item label="状态">
+          <dict-tag :options="pet_service_consumer_record_status" :value="form.status" />
+        </t-descriptions-item>
         <t-descriptions-item label="主人id">{{ form.ownerId }}</t-descriptions-item>
         <t-descriptions-item label="用户id">{{ form.userId }}</t-descriptions-item>
         <t-descriptions-item label="场所id">{{ form.placeId }}</t-descriptions-item>
@@ -377,12 +420,16 @@
         <t-descriptions-item label="服务商id">{{ form.providerId }}</t-descriptions-item>
         <t-descriptions-item label="服务商人员id">{{ form.providerOwnerId }}</t-descriptions-item>
         <t-descriptions-item label="服务商人员用户id">{{ form.providerUserId }}</t-descriptions-item>
-        <t-descriptions-item label="是否预约单:0=否,1=是">{{ form.reserve }}</t-descriptions-item>
+        <t-descriptions-item label="是否预约单">
+          <dict-tag :options="pet_friendly_service_info_reserve" :value="form.reserve" />
+        </t-descriptions-item>
         <t-descriptions-item label="预约开始时间">{{ parseTime(form.reserveStartTime) }}</t-descriptions-item>
         <t-descriptions-item label="预约结束时间">{{ parseTime(form.reserveEndTime) }}</t-descriptions-item>
         <t-descriptions-item label="预约要求">{{ form.reserveInformation }}</t-descriptions-item>
         <t-descriptions-item label="服务id">{{ form.serviceId }}</t-descriptions-item>
-        <t-descriptions-item label="服务类型">{{ form.serviceType }}</t-descriptions-item>
+        <t-descriptions-item label="服务类型">
+          <dict-tag :options="pet_friendly_service_info_type" :value="form.serviceType" />
+        </t-descriptions-item>
         <t-descriptions-item label="服务内容">{{ form.serviceName }}</t-descriptions-item>
         <t-descriptions-item label="服务证明" :span="2">{{ form.serviceCertificate }}</t-descriptions-item>
         <t-descriptions-item label="服务信息" :span="2">{{ form.serviceInformation }}</t-descriptions-item>
@@ -425,6 +472,7 @@ import type { PetServiceConsumerRecordForm, PetServiceConsumerRecordQuery, PetSe
 import { listServiceConsumerRecord, getServiceConsumerRecord, delServiceConsumerRecord, addServiceConsumerRecord, updateServiceConsumerRecord } from '@/api/petFriendly/serviceConsumerRecord';
 
 const { proxy } = getCurrentInstance();
+const { pet_friendly_service_info_reserve, pet_friendly_service_info_type, pet_service_consumer_record_status } = proxy.useDict('pet_friendly_service_info_reserve', 'pet_friendly_service_info_type', 'pet_service_consumer_record_status');
 
 const openView = ref(false);
 const openViewLoading = ref(false);
@@ -456,7 +504,7 @@ const columns = ref<Array<PrimaryTableCol>>([
   { title: `选择列`, colKey: 'row-select', type: 'multiple', width: 50, align: 'center' },
   { title: `创建时间`, colKey: 'createTime', align: 'center', minWidth: 112, width: 180 },
   { title: `更新时间`, colKey: 'updateTime', align: 'center', minWidth: 112, width: 180 },
-  { title: `状态:0=点击,1=填写,2=发起,3=等待派单,4=进行中,5=完成待评价,6=完成,7=服务取消,8=服务售后发起,9=售后等待分配,10=售后处理中,11=售后完成待评价,12=售后完成,13=售后取消,14=标记异常单,15=标记正常单`, colKey: 'status', align: 'center' },
+  { title: `状态`, colKey: 'status', align: 'center' },
   { title: `主人id`, colKey: 'ownerId', align: 'center' },
   { title: `用户id`, colKey: 'userId', align: 'center' },
   { title: `场所id`, colKey: 'placeId', align: 'center' },
@@ -464,7 +512,7 @@ const columns = ref<Array<PrimaryTableCol>>([
   { title: `服务商id`, colKey: 'providerId', align: 'center' },
   { title: `服务商人员id`, colKey: 'providerOwnerId', align: 'center' },
   { title: `服务商人员用户id`, colKey: 'providerUserId', align: 'center' },
-  { title: `是否预约单:0=否,1=是`, colKey: 'reserve', align: 'center' },
+  { title: `是否预约单`, colKey: 'reserve', align: 'center' },
   { title: `预约开始时间`, colKey: 'reserveStartTime', align: 'center', minWidth: 112, width: 180 },
   { title: `预约结束时间`, colKey: 'reserveEndTime', align: 'center', minWidth: 112, width: 180 },
   { title: `预约要求`, colKey: 'reserveInformation', align: 'center' },

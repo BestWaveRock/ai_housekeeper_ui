@@ -2,9 +2,14 @@
   <t-card>
     <t-space direction="vertical" style="width: 100%">
       <t-form v-show="showSearch" ref="queryRef" :data="queryParams" layout="inline" reset-type="initial" label-width="calc(4em + 12px)">
-        <t-form-item label="状态:0=正常,1=停用" name="status">
-          <t-select v-model="queryParams.status" placeholder="请选择状态:0=正常,1=停用" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="状态" name="status">
+          <t-select v-model="queryParams.status" placeholder="请选择状态" clearable>
+            <t-option
+              v-for="dict in general_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
         <t-form-item label="主人id" name="ownerId">
@@ -111,6 +116,9 @@
             </t-col>
           </t-row>
         </template>
+        <template #status="{ row }">
+          <dict-tag :options="general_status" :value="row.status" />
+        </template>
         <template #operation="{ row }">
           <t-space :size="8" break-line>
             <my-link v-hasPermi="['petFriendly:placeFavorites:query']" @click.stop="handleDetail(row)">
@@ -133,7 +141,7 @@
       :header="title"
       destroy-on-close
       :close-on-overlay-click="false"
-      width="min(500px, 100%)"
+      width="min(800px, 100%)"
       attach="body"
       :confirm-btn="{
         loading: buttonLoading,
@@ -150,9 +158,14 @@
           scroll-to-first-error="smooth"
           @submit="submitForm"
         >
-          <t-form-item label="状态:0=正常,1=停用" name="status">
+          <t-form-item label="状态" name="status">
             <t-radio-group v-model="form.status">
-              <t-radio value="1">请选择字典生成</t-radio>
+              <t-radio
+                v-for="dict in general_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-radio>
             </t-radio-group>
           </t-form-item>
           <t-form-item label="主人id" name="ownerId">
@@ -205,10 +218,12 @@
       :footer="false"
     >
       <my-descriptions :loading="openViewLoading">
-        <t-descriptions-item label="">{{ form.favoritesId }}</t-descriptions-item>
+        <t-descriptions-item label="ID">{{ form.favoritesId }}</t-descriptions-item>
         <t-descriptions-item label="创建时间">{{ parseTime(form.createTime) }}</t-descriptions-item>
         <t-descriptions-item label="更新时间">{{ parseTime(form.updateTime) }}</t-descriptions-item>
-        <t-descriptions-item label="状态:0=正常,1=停用">{{ form.status }}</t-descriptions-item>
+        <t-descriptions-item label="状态">
+          <dict-tag :options="general_status" :value="form.status" />
+        </t-descriptions-item>
         <t-descriptions-item label="主人id">{{ form.ownerId }}</t-descriptions-item>
         <t-descriptions-item label="用户id">{{ form.userId }}</t-descriptions-item>
         <t-descriptions-item label="场所id">{{ form.placeId }}</t-descriptions-item>
@@ -247,6 +262,7 @@ import type { PetPlaceFavoritesForm, PetPlaceFavoritesQuery, PetPlaceFavoritesVo
 import { listPlaceFavorites, getPlaceFavorites, delPlaceFavorites, addPlaceFavorites, updatePlaceFavorites } from '@/api/petFriendly/placeFavorites';
 
 const { proxy } = getCurrentInstance();
+const { general_status } = proxy.useDict('general_status');
 
 const openView = ref(false);
 const openViewLoading = ref(false);
@@ -275,7 +291,7 @@ const columns = ref<Array<PrimaryTableCol>>([
   { title: `选择列`, colKey: 'row-select', type: 'multiple', width: 50, align: 'center' },
   { title: `创建时间`, colKey: 'createTime', align: 'center', minWidth: 112, width: 180 },
   { title: `更新时间`, colKey: 'updateTime', align: 'center', minWidth: 112, width: 180 },
-  { title: `状态:0=正常,1=停用`, colKey: 'status', align: 'center' },
+  { title: `状态`, colKey: 'status', align: 'center' },
   { title: `主人id`, colKey: 'ownerId', align: 'center' },
   { title: `用户id`, colKey: 'userId', align: 'center' },
   { title: `场所id`, colKey: 'placeId', align: 'center' },

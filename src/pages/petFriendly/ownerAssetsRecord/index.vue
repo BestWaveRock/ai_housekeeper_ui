@@ -2,9 +2,14 @@
   <t-card>
     <t-space direction="vertical" style="width: 100%">
       <t-form v-show="showSearch" ref="queryRef" :data="queryParams" layout="inline" reset-type="initial" label-width="calc(4em + 12px)">
-        <t-form-item label="状态:0=正常,1=停用,2=待支付,3=待发货" name="status">
-          <t-select v-model="queryParams.status" placeholder="请选择状态:0=正常,1=停用,2=待支付,3=待发货" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="状态" name="status">
+          <t-select v-model="queryParams.status" placeholder="请选择状态" clearable>
+            <t-option
+              v-for="dict in pet_owner_assets_record_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
         <t-form-item label="主人id" name="ownerId">
@@ -28,17 +33,27 @@
         <t-form-item label="服务商人员用户id" name="providerUserId">
           <t-input v-model="queryParams.providerUserId" placeholder="请输入服务商人员用户id" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="资产类型:1=爱心值,2=积分金币" name="assetsType">
-          <t-select v-model="queryParams.assetsType" placeholder="请选择资产类型:1=爱心值,2=积分金币" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="资产类型" name="assetsType">
+          <t-select v-model="queryParams.assetsType" placeholder="请选择资产类型" clearable>
+            <t-option
+              v-for="dict in pet_owner_assets_record_assets_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
         <t-form-item label="变动识别单号" name="changeCode">
           <t-input v-model="queryParams.changeCode" placeholder="请输入变动识别单号" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="变动类型:1=系统自动,2=积分商城购买,3=积分商城售后,4=系统标记操作" name="changeType">
-          <t-select v-model="queryParams.changeType" placeholder="请选择变动类型:1=系统自动,2=积分商城购买,3=积分商城售后,4=系统标记操作" clearable>
-            <t-option label="请选择字典生成" value="" />
+        <t-form-item label="变动类型" name="changeType">
+          <t-select v-model="queryParams.changeType" placeholder="请选择变动类型" clearable>
+            <t-option
+              v-for="dict in pet_owner_assets_record_change_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
           </t-select>
         </t-form-item>
         <t-form-item label="变动时间" name="changeTime">
@@ -165,6 +180,15 @@
             </t-col>
           </t-row>
         </template>
+        <template #status="{ row }">
+          <dict-tag :options="pet_owner_assets_record_status" :value="row.status" />
+        </template>
+        <template #assetsType="{ row }">
+          <dict-tag :options="pet_owner_assets_record_assets_type" :value="row.assetsType" />
+        </template>
+        <template #changeType="{ row }">
+          <dict-tag :options="pet_owner_assets_record_change_type" :value="row.changeType" />
+        </template>
         <template #operation="{ row }">
           <t-space :size="8" break-line>
             <my-link v-hasPermi="['petFriendly:ownerAssetsRecord:query']" @click.stop="handleDetail(row)">
@@ -187,7 +211,7 @@
       :header="title"
       destroy-on-close
       :close-on-overlay-click="false"
-      width="min(500px, 100%)"
+      width="min(800px, 100%)"
       attach="body"
       :confirm-btn="{
         loading: buttonLoading,
@@ -204,9 +228,14 @@
           scroll-to-first-error="smooth"
           @submit="submitForm"
         >
-          <t-form-item label="状态:0=正常,1=停用,2=待支付,3=待发货" name="status">
+          <t-form-item label="状态" name="status">
             <t-radio-group v-model="form.status">
-              <t-radio value="1">请选择字典生成</t-radio>
+              <t-radio
+                v-for="dict in pet_owner_assets_record_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></t-radio>
             </t-radio-group>
           </t-form-item>
           <t-form-item label="主人id" name="ownerId">
@@ -230,17 +259,27 @@
           <t-form-item label="服务商人员用户id" name="providerUserId">
             <t-input-number v-model="form.providerUserId" placeholder="请输入" />
           </t-form-item>
-          <t-form-item label="资产类型:1=爱心值,2=积分金币" name="assetsType">
-            <t-select v-model="form.assetsType" placeholder="请选择资产类型:1=爱心值,2=积分金币" clearable>
-              <t-option label="请选择字典生成" value="" />
+          <t-form-item label="资产类型" name="assetsType">
+            <t-select v-model="form.assetsType" placeholder="请选择资产类型" clearable>
+              <t-option
+              v-for="dict in pet_owner_assets_record_assets_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
             </t-select>
           </t-form-item>
           <t-form-item label="变动识别单号" name="changeCode">
             <t-input v-model="form.changeCode" placeholder="请输入变动识别单号" clearable />
           </t-form-item>
-          <t-form-item label="变动类型:1=系统自动,2=积分商城购买,3=积分商城售后,4=系统标记操作" name="changeType">
-            <t-select v-model="form.changeType" placeholder="请选择变动类型:1=系统自动,2=积分商城购买,3=积分商城售后,4=系统标记操作" clearable>
-              <t-option label="请选择字典生成" value="" />
+          <t-form-item label="变动类型" name="changeType">
+            <t-select v-model="form.changeType" placeholder="请选择变动类型" clearable>
+              <t-option
+              v-for="dict in pet_owner_assets_record_change_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></t-option>
             </t-select>
           </t-form-item>
           <t-form-item label="变动时间" name="changeTime">
@@ -314,10 +353,12 @@
       :footer="false"
     >
       <my-descriptions :loading="openViewLoading">
-        <t-descriptions-item label="">{{ form.ownerAssetsRecordId }}</t-descriptions-item>
+        <t-descriptions-item label="ID">{{ form.ownerAssetsRecordId }}</t-descriptions-item>
         <t-descriptions-item label="创建时间">{{ parseTime(form.createTime) }}</t-descriptions-item>
         <t-descriptions-item label="更新时间">{{ parseTime(form.updateTime) }}</t-descriptions-item>
-        <t-descriptions-item label="状态:0=正常,1=停用,2=待支付,3=待发货">{{ form.status }}</t-descriptions-item>
+        <t-descriptions-item label="状态">
+          <dict-tag :options="pet_owner_assets_record_status" :value="form.status" />
+        </t-descriptions-item>
         <t-descriptions-item label="主人id">{{ form.ownerId }}</t-descriptions-item>
         <t-descriptions-item label="用户id">{{ form.userId }}</t-descriptions-item>
         <t-descriptions-item label="场所id">{{ form.placeId }}</t-descriptions-item>
@@ -325,9 +366,13 @@
         <t-descriptions-item label="服务商id">{{ form.providerId }}</t-descriptions-item>
         <t-descriptions-item label="服务商人员id">{{ form.providerOwnerId }}</t-descriptions-item>
         <t-descriptions-item label="服务商人员用户id">{{ form.providerUserId }}</t-descriptions-item>
-        <t-descriptions-item label="资产类型:1=爱心值,2=积分金币">{{ form.assetsType }}</t-descriptions-item>
+        <t-descriptions-item label="资产类型">
+          <dict-tag :options="pet_owner_assets_record_assets_type" :value="form.assetsType" />
+        </t-descriptions-item>
         <t-descriptions-item label="变动识别单号">{{ form.changeCode }}</t-descriptions-item>
-        <t-descriptions-item label="变动类型:1=系统自动,2=积分商城购买,3=积分商城售后,4=系统标记操作">{{ form.changeType }}</t-descriptions-item>
+        <t-descriptions-item label="变动类型">
+          <dict-tag :options="pet_owner_assets_record_change_type" :value="form.changeType" />
+        </t-descriptions-item>
         <t-descriptions-item label="变动时间">{{ parseTime(form.changeTime) }}</t-descriptions-item>
         <t-descriptions-item label="积分商品id">{{ form.integralCommodityId }}</t-descriptions-item>
         <t-descriptions-item label="商品名称">{{ form.commodityTitle }}</t-descriptions-item>
@@ -371,6 +416,7 @@ import type { PetOwnerAssetsRecordForm, PetOwnerAssetsRecordQuery, PetOwnerAsset
 import { listOwnerAssetsRecord, getOwnerAssetsRecord, delOwnerAssetsRecord, addOwnerAssetsRecord, updateOwnerAssetsRecord } from '@/api/petFriendly/ownerAssetsRecord';
 
 const { proxy } = getCurrentInstance();
+const { pet_owner_assets_record_status, pet_owner_assets_record_assets_type, pet_owner_assets_record_change_type } = proxy.useDict('pet_owner_assets_record_status', 'pet_owner_assets_record_assets_type', 'pet_owner_assets_record_change_type');
 
 const openView = ref(false);
 const openViewLoading = ref(false);
@@ -402,7 +448,7 @@ const columns = ref<Array<PrimaryTableCol>>([
   { title: `选择列`, colKey: 'row-select', type: 'multiple', width: 50, align: 'center' },
   { title: `创建时间`, colKey: 'createTime', align: 'center', minWidth: 112, width: 180 },
   { title: `更新时间`, colKey: 'updateTime', align: 'center', minWidth: 112, width: 180 },
-  { title: `状态:0=正常,1=停用,2=待支付,3=待发货`, colKey: 'status', align: 'center' },
+  { title: `状态`, colKey: 'status', align: 'center' },
   { title: `主人id`, colKey: 'ownerId', align: 'center' },
   { title: `用户id`, colKey: 'userId', align: 'center' },
   { title: `场所id`, colKey: 'placeId', align: 'center' },
@@ -410,9 +456,9 @@ const columns = ref<Array<PrimaryTableCol>>([
   { title: `服务商id`, colKey: 'providerId', align: 'center' },
   { title: `服务商人员id`, colKey: 'providerOwnerId', align: 'center' },
   { title: `服务商人员用户id`, colKey: 'providerUserId', align: 'center' },
-  { title: `资产类型:1=爱心值,2=积分金币`, colKey: 'assetsType', align: 'center' },
+  { title: `资产类型`, colKey: 'assetsType', align: 'center' },
   { title: `变动识别单号`, colKey: 'changeCode', align: 'center' },
-  { title: `变动类型:1=系统自动,2=积分商城购买,3=积分商城售后,4=系统标记操作`, colKey: 'changeType', align: 'center' },
+  { title: `变动类型`, colKey: 'changeType', align: 'center' },
   { title: `变动时间`, colKey: 'changeTime', align: 'center', minWidth: 112, width: 180 },
   { title: `积分商品id`, colKey: 'integralCommodityId', align: 'center' },
   { title: `商品名称`, colKey: 'commodityTitle', align: 'center' },
