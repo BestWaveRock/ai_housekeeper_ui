@@ -181,7 +181,7 @@
                 v-for="dict in pet_owner_achievement_badge_record_status"
                 :key="dict.value"
                 :label="dict.label"
-                :value="dict.value"
+                :value="Number(dict.value)"
               ></t-radio>
             </t-radio-group>
           </t-form-item>

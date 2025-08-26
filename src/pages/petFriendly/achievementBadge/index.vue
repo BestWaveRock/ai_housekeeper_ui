@@ -161,7 +161,7 @@
                 v-for="dict in general_status"
                 :key="dict.value"
                 :label="dict.label"
-                :value="dict.value"
+                :value="Number(dict.value)"
               ></t-radio>
             </t-radio-group>
           </t-form-item>

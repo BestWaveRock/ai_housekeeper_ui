@@ -232,7 +232,7 @@
                 v-for="dict in general_status"
                 :key="dict.value"
                 :label="dict.label"
-                :value="dict.value"
+                :value="Number(dict.value)"
               ></t-radio>
             </t-radio-group>
           </t-form-item>
@@ -242,7 +242,7 @@
                 v-for="dict in pet_friendly_service_info_reserve"
                 :key="dict.value"
                 :label="dict.label"
-                :value="dict.value"
+                :value="Number(dict.value)"
               ></t-radio>
             </t-radio-group>
           </t-form-item>
@@ -252,7 +252,7 @@
                 v-for="dict in pet_friendly_service_info_type"
                 :key="dict.value"
                 :label="dict.label"
-                :value="dict.value"
+                :value="Number(dict.value)"
               ></t-radio>
             </t-radio-group>
           </t-form-item>
@@ -274,7 +274,7 @@
                 v-for="dict in pet_friendly_service_info_jump_page_type"
                 :key="dict.value"
                 :label="dict.label"
-                :value="dict.value"
+                :value="Number(dict.value)"
               ></t-radio>
             </t-radio-group>
           </t-form-item>
@@ -287,7 +287,7 @@
                 v-for="dict in 	pet_service_provider_service_level"
                 :key="dict.value"
                 :label="dict.label"
-                :value="dict.value"
+                :value="Number(dict.value)"
               ></t-radio>
             </t-radio-group>
           </t-form-item>

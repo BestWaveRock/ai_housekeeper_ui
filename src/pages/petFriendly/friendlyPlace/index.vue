@@ -38,14 +38,62 @@
             ></t-option>
           </t-select>
         </t-form-item>
+        <!-- 省份 -->
         <t-form-item label="所属省份" name="proviceCode">
-          <t-input v-model="queryParams.proviceCode" placeholder="请输入所属省份" clearable @enter="handleQuery" />
+          <t-select
+            v-model="queryParams.proviceCode"
+            placeholder="请选择省份"
+            clearable
+            filterable
+            :loading="provinceLoading"
+            @change="onProvinceChange(queryParams.proviceCode)"
+          >
+            <t-option
+              v-for="p in provinceList"
+              :key="p.id"
+              :label="p.extName"
+              :value="p.id"
+            />
+          </t-select>
         </t-form-item>
+
+        <!-- 城市 -->
         <t-form-item label="所属城市" name="cityCode">
-          <t-input v-model="queryParams.cityCode" placeholder="请输入所属城市" clearable @enter="handleQuery" />
+          <t-select
+            v-model="queryParams.cityCode"
+            placeholder="请选择城市"
+            clearable
+            filterable
+            :loading="cityLoading"
+            :disabled="!queryParams.proviceCode"
+            @change="onCityChange(queryParams.cityCode)"
+          >
+            <t-option
+              v-for="c in cityList"
+              :key="c.id"
+              :label="c.extName"
+              :value="c.id"
+            />
+          </t-select>
         </t-form-item>
+
+        <!-- 区县 -->
         <t-form-item label="所属区县" name="districtCode">
-          <t-input v-model="queryParams.districtCode" placeholder="请输入所属区县" clearable @enter="handleQuery" />
+          <t-select
+            v-model="queryParams.districtCode"
+            placeholder="请选择区县"
+            clearable
+            filterable
+            :loading="districtLoading"
+            :disabled="!queryParams.cityCode"
+          >
+            <t-option
+              v-for="d in districtList"
+              :key="d.id"
+              :label="d.extName"
+              :value="d.id"
+            />
+          </t-select>
         </t-form-item>
         <t-form-item label="经度" name="longitude">
           <t-input v-model="queryParams.longitude" placeholder="请输入经度" clearable @enter="handleQuery" />
@@ -154,6 +202,16 @@
         <template #placeLevel="{ row }">
           <dict-tag :options="pet_friendly_place_place_level" :value="row.placeLevel" />
         </template>
+        <template #proviceCode="{ row }">
+          <!-- 使用 Suspense / 自定义指令 / 手动触发都行 -->
+          <LazyRegionName :id="row.proviceCode" :loader="loadName" />
+        </template>
+        <template #cityCode="{ row }">
+          <LazyRegionName :id="row.cityCode" :loader="loadName" />
+        </template>
+        <template #districtCode="{ row }">
+          <LazyRegionName :id="row.districtCode" :loader="loadName" />
+        </template>
         <template #operation="{ row }">
           <t-space :size="8" break-line>
             <my-link v-hasPermi="['petFriendly:friendlyPlace:query']" @click.stop="handleDetail(row)">
@@ -199,7 +257,7 @@
                 v-for="dict in pet_friendly_place_status"
                 :key="dict.value"
                 :label="dict.label"
-                :value="dict.value"
+                :value="Number(dict.value)"
               ></t-radio>
             </t-radio-group>
           </t-form-item>
@@ -212,7 +270,7 @@
                 v-for="dict in pet_friendly_place_type"
                 :key="dict.value"
                 :label="dict.label"
-                :value="dict.value"
+                :value="Number(dict.value)"
               ></t-radio>
             </t-radio-group>
           </t-form-item>
@@ -220,23 +278,71 @@
             <t-input-number v-model="form.rate" :min="0" :max="5" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="友好度" name="placeLevel">
-            <t-radio-group v-model="queryParams.placeLevel">
+            <t-radio-group v-model="form.placeLevel">
               <t-radio
                 v-for="dict in pet_friendly_place_place_level"
                 :key="dict.value"
                 :label="dict.label"
-                :value="dict.value"
+                :value="Number(dict.value)"
               ></t-radio>
             </t-radio-group>
           </t-form-item>
+          <!-- 省份 -->
           <t-form-item label="所属省份" name="proviceCode">
-            <t-input v-model="form.proviceCode" placeholder="请输入所属省份" clearable />
+            <t-select
+              v-model="form.proviceCode"
+              placeholder="请选择省份"
+              clearable
+              filterable
+              :loading="provinceLoading"
+              @change="onProvinceChange(form.proviceCode)"
+            >
+              <t-option
+                v-for="p in provinceList"
+                :key="p.id"
+                :label="p.extName"
+                :value="String(p.id)"
+              />
+            </t-select>
           </t-form-item>
+
+          <!-- 城市 -->
           <t-form-item label="所属城市" name="cityCode">
-            <t-input v-model="form.cityCode" placeholder="请输入所属城市" clearable />
+            <t-select
+              v-model="form.cityCode"
+              placeholder="请选择城市"
+              clearable
+              filterable
+              :loading="cityLoading"
+              :disabled="!form.proviceCode"
+              @change="onCityChange(form.cityCode)"
+            >
+              <t-option
+                v-for="c in cityList"
+                :key="c.id"
+                :label="c.extName"
+                :value="String(c.id)"
+              />
+            </t-select>
           </t-form-item>
+
+          <!-- 区县 -->
           <t-form-item label="所属区县" name="districtCode">
-            <t-input v-model="form.districtCode" placeholder="请输入所属区县" clearable />
+            <t-select
+              v-model="form.districtCode"
+              placeholder="请选择区县"
+              clearable
+              filterable
+              :loading="districtLoading"
+              :disabled="!form.cityCode"
+            >
+              <t-option
+                v-for="d in districtList"
+                :key="d.id"
+                :label="d.extName"
+                :value="String(d.id)"
+              />
+            </t-select>
           </t-form-item>
           <t-form-item label="经度" name="longitude">
             <t-input v-model="form.longitude" placeholder="请输入经度" />
@@ -296,9 +402,15 @@
         <t-descriptions-item label="友好度">
           <dict-tag :options="pet_friendly_place_place_level" :value="form.placeLevel" />
         </t-descriptions-item>
-        <t-descriptions-item label="所属省份">{{ form.proviceCode }}</t-descriptions-item>
-        <t-descriptions-item label="所属城市">{{ form.cityCode }}</t-descriptions-item>
-        <t-descriptions-item label="所属区县">{{ form.districtCode }}</t-descriptions-item>
+        <t-descriptions-item label="所属省份">
+          <LazyRegionName :id="form.proviceCode" :loader="loadName" />
+        </t-descriptions-item>
+        <t-descriptions-item label="所属城市">
+          <LazyRegionName :id="form.cityCode" :loader="loadName" />
+        </t-descriptions-item>
+        <t-descriptions-item label="所属区县">
+          <LazyRegionName :id="form.districtCode" :loader="loadName" />
+        </t-descriptions-item>
         <t-descriptions-item label="经度">{{ form.longitude }}</t-descriptions-item>
         <t-descriptions-item label="纬度">{{ form.latitude }}</t-descriptions-item>
         <t-descriptions-item label="备注">{{ form.remark }}</t-descriptions-item>
@@ -334,6 +446,8 @@ import { ArrayOps } from '@/utils/array';
 import type { PetFriendlyPlaceForm, PetFriendlyPlaceQuery, PetFriendlyPlaceVo } from '@/api/petFriendly/model/friendlyPlaceModel';
 import { listFriendlyPlace, getFriendlyPlace, delFriendlyPlace, addFriendlyPlace, updateFriendlyPlace } from '@/api/petFriendly/friendlyPlace';
 
+import { listRegionInfo, getRegionInfo } from '@/api/system/regionInfo';
+
 const { proxy } = getCurrentInstance();
 const { pet_friendly_place_type, pet_friendly_place_status, pet_friendly_place_place_level } = proxy.useDict('pet_friendly_place_type', 'pet_friendly_place_status', 'pet_friendly_place_place_level');
 
@@ -356,9 +470,9 @@ const multiple = ref(true);
 const rules = ref<Record<string, Array<FormRule>>>({
   name: [{ required: true, message: '场所名称不能为空' }, { max: 100, message: '场所名称不能超过100个字符' }],
   type: [{ required: true, message: '场所类型不能为空' }],
-  proviceCode: [{ max: 20, message: '所属省份不能超过20个字符' }],
-  cityCode: [{ max: 20, message: '所属城市不能超过20个字符' }],
-  districtCode: [{ max: 20, message: '所属区县不能超过20个字符' }],
+  proviceCode: [{ required: true, message: '所属省份不能为空' }],
+  cityCode: [{ required: true, message: '所属城市不能为空' }],
+  districtCode: [{ required: true, message: '所属区县不能为空' }],
   remark: [{ max: 200, message: '备注不能超过200个字符' }],
   contactName: [{ max: 30, message: '联系人不能超过30个字符' }],
   contactInformation: [{ max: 30, message: '联系方式不能超过30个字符' }],
@@ -493,6 +607,8 @@ function handleUpdate(row?: PetFriendlyPlaceVo) {
   getFriendlyPlace(placeId).then((response) => {
     buttonLoading.value = false;
     form.value = response.data;
+    fetchRegion(1, form.value.proviceCode).then(res => (cityList.value = res.rows))
+    fetchRegion(2, form.value.cityCode).then(res => (districtList.value = res.rows))
   });
 }
 
@@ -556,6 +672,80 @@ function handleExport() {
     `friendlyPlace_${new Date().getTime()}.xlsx`,
   );
 }
+
+
+/** 查询行政区划管理列表 */
+import type { ChinaRegionInfoVo, ChinaRegionInfoQuery } from '@/api/system/model/regionInfoModel';
+/* -------------------- 基础数据 -------------------- */
+const provinceLoading = ref(false)
+const cityLoading = ref(false)
+const districtLoading = ref(false)
+
+const provinceList = ref<ChinaRegionInfoVo[]>([])
+const cityList     = ref<ChinaRegionInfoVo[]>([])
+const districtList = ref<ChinaRegionInfoVo[]>([])
+
+const regionQueryParams = ref<ChinaRegionInfoQuery>({
+  pageNum: 1,
+  pageSize: 100,
+  pid: undefined,
+  deep: undefined
+})
+
+/* -------------------- 通用加载方法 -------------------- */
+function fetchRegion(deep: 0 | 1 | 2, parentId?: string | number) {
+  deep == 0 ? provinceLoading.value = true : (deep == 1 ? cityLoading.value = true : districtLoading.value = true)
+  
+  regionQueryParams.value.pid = parentId ? Number(parentId) : null
+  regionQueryParams.value.deep = deep ? deep : null
+  
+  return listRegionInfo(regionQueryParams.value).finally(() => (deep == 0 ? provinceLoading.value = false : (deep == 1 ? cityLoading.value = false : districtLoading.value = false)))
+}
+
+/* -------------------- 联动 -------------------- */
+function onProvinceChange(val?: string) {
+  // 清空下级
+  queryParams.value.cityCode = ''
+  queryParams.value.districtCode = ''
+  form.value.cityCode = ''
+  form.value.districtCode = ''
+  cityList.value = []
+  districtList.value = []
+
+  if (!val) return
+  fetchRegion(1, val).then(res => (cityList.value = res.rows))
+}
+
+function onCityChange(val?: string) {
+  queryParams.value.districtCode = ''
+  form.value.districtCode = ''
+  districtList.value = []
+
+  if (!val) return
+  fetchRegion(2, val).then(res => (districtList.value = res.rows))
+}
+
+/* 缓存：只存已经查过的 id -> name */
+const cache = ref<Record<string, string>>({})
+
+async function loadName(id: string | number) {
+  if (!id) return ''
+  const key = String(id)
+  if (cache.value[key] !== undefined) return cache.value[key]
+
+  try {
+    const { data } = await getRegionInfo(Number(id))
+    cache.value[key] = data.extName ?? ''
+  } catch {
+    cache.value[key] = ''
+  }
+  return cache.value[key]
+}
+
+/* -------------------- 初始化 -------------------- */
+onMounted(() => {
+  fetchRegion(0).then(res => (provinceList.value = res.rows))
+})
 
 getList();
 </script>

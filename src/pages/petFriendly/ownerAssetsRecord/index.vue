@@ -234,7 +234,7 @@
                 v-for="dict in pet_owner_assets_record_status"
                 :key="dict.value"
                 :label="dict.label"
-                :value="dict.value"
+                :value="Number(dict.value)"
               ></t-radio>
             </t-radio-group>
           </t-form-item>
@@ -265,7 +265,7 @@
               v-for="dict in pet_owner_assets_record_assets_type"
               :key="dict.value"
               :label="dict.label"
-              :value="dict.value"
+                :value="Number(dict.value)"
             ></t-option>
             </t-select>
           </t-form-item>
@@ -278,7 +278,7 @@
               v-for="dict in pet_owner_assets_record_change_type"
               :key="dict.value"
               :label="dict.label"
-              :value="dict.value"
+                :value="Number(dict.value)"
             ></t-option>
             </t-select>
           </t-form-item>

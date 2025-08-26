@@ -259,7 +259,7 @@
                 v-for="dict in pet_service_consumer_record_status"
                 :key="dict.value"
                 :label="dict.label"
-                :value="dict.value"
+                :value="Number(dict.value)"
               ></t-radio>
             </t-radio-group>
           </t-form-item>
@@ -289,7 +289,7 @@
               <t-option v-for="dict in pet_friendly_service_info_reserve"
                 :key="dict.value"
                 :label="dict.label"
-                :value="dict.value"
+                :value="Number(dict.value)"
               ></t-option>
             </t-select>
           </t-form-item>
@@ -323,7 +323,7 @@
               v-for="dict in pet_friendly_service_info_type"
               :key="dict.value"
               :label="dict.label"
-              :value="dict.value"
+                :value="Number(dict.value)"
             ></t-option>
             </t-select>
           </t-form-item>
