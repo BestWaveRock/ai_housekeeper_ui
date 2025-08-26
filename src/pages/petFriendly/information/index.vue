@@ -59,14 +59,62 @@
         <t-form-item label="排序" name="petSort">
           <t-input v-model="queryParams.petSort" placeholder="请输入排序" clearable @enter="handleQuery" />
         </t-form-item>
+        <!-- 省份 -->
         <t-form-item label="所属省份" name="proviceCode">
-          <t-input v-model="queryParams.proviceCode" placeholder="请输入所属省份" clearable @enter="handleQuery" />
+          <t-select
+            v-model="queryParams.proviceCode"
+            placeholder="请选择省份"
+            clearable
+            filterable
+            :loading="provinceLoading"
+            @change="onProvinceChange(queryParams.proviceCode)"
+          >
+            <t-option
+              v-for="p in provinceList"
+              :key="p.id"
+              :label="p.extName"
+              :value="p.id"
+            />
+          </t-select>
         </t-form-item>
+
+        <!-- 城市 -->
         <t-form-item label="所属城市" name="cityCode">
-          <t-input v-model="queryParams.cityCode" placeholder="请输入所属城市" clearable @enter="handleQuery" />
+          <t-select
+            v-model="queryParams.cityCode"
+            placeholder="请选择城市"
+            clearable
+            filterable
+            :loading="cityLoading"
+            :disabled="!queryParams.proviceCode"
+            @change="onCityChange(queryParams.cityCode)"
+          >
+            <t-option
+              v-for="c in cityList"
+              :key="c.id"
+              :label="c.extName"
+              :value="c.id"
+            />
+          </t-select>
         </t-form-item>
+
+        <!-- 区县 -->
         <t-form-item label="所属区县" name="districtCode">
-          <t-input v-model="queryParams.districtCode" placeholder="请输入所属区县" clearable @enter="handleQuery" />
+          <t-select
+            v-model="queryParams.districtCode"
+            placeholder="请选择区县"
+            clearable
+            filterable
+            :loading="districtLoading"
+            :disabled="!queryParams.cityCode"
+          >
+            <t-option
+              v-for="d in districtList"
+              :key="d.id"
+              :label="d.extName"
+              :value="d.id"
+            />
+          </t-select>
         </t-form-item>
         <t-form-item label="宠物证件号" name="petIdcard">
           <t-input v-model="queryParams.petIdcard" placeholder="请输入宠物证件号" clearable @enter="handleQuery" />
@@ -112,7 +160,7 @@
         <t-form-item label="所属服务商id" name="providerId">
           <t-input v-model="queryParams.providerId" placeholder="请输入所属服务商id" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="保留字端" name="ext">
+        <!-- <t-form-item label="保留字端" name="ext">
           <t-input v-model="queryParams.ext" placeholder="请输入保留字端" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="保留字端1" name="ext1">
@@ -123,7 +171,7 @@
         </t-form-item>
         <t-form-item label="保留字端3" name="ext3">
           <t-input v-model="queryParams.ext3" placeholder="请输入保留字端3" clearable @enter="handleQuery" />
-        </t-form-item>
+        </t-form-item> -->
         <t-form-item label-width="0px">
           <t-button theme="primary" @click="handleQuery">
             <template #icon> <search-icon /></template>
@@ -209,6 +257,15 @@
         </template>
         <template #contactType="{ row }">
           <dict-tag :options="pet_owner_owner_type" :value="row.contactType" />
+        </template>
+        <template #proviceCode="{ row }">
+          <LazyRegionName :id="row.proviceCode" :loader="loadName" />
+        </template>
+        <template #cityCode="{ row }">
+          <LazyRegionName :id="row.cityCode" :loader="loadName" />
+        </template>
+        <template #districtCode="{ row }">
+          <LazyRegionName :id="row.districtCode" :loader="loadName" />
         </template>
         <template #operation="{ row }">
           <t-space :size="8" break-line>
@@ -307,14 +364,62 @@
           <t-form-item label="排序" name="petSort">
             <t-input-number v-model="form.petSort" placeholder="请输入" />
           </t-form-item>
+          <!-- 省份 -->
           <t-form-item label="所属省份" name="proviceCode">
-            <t-input v-model="form.proviceCode" placeholder="请输入所属省份" clearable />
+            <t-select
+              v-model="form.proviceCode"
+              placeholder="请选择省份"
+              clearable
+              filterable
+              :loading="provinceLoading"
+              @change="onProvinceChange(form.proviceCode)"
+            >
+              <t-option
+                v-for="p in provinceList"
+                :key="p.id"
+                :label="p.extName"
+                :value="String(p.id)"
+              />
+            </t-select>
           </t-form-item>
+
+          <!-- 城市 -->
           <t-form-item label="所属城市" name="cityCode">
-            <t-input v-model="form.cityCode" placeholder="请输入所属城市" clearable />
+            <t-select
+              v-model="form.cityCode"
+              placeholder="请选择城市"
+              clearable
+              filterable
+              :loading="cityLoading"
+              :disabled="!form.proviceCode"
+              @change="onCityChange(form.cityCode)"
+            >
+              <t-option
+                v-for="c in cityList"
+                :key="c.id"
+                :label="c.extName"
+                :value="String(c.id)"
+              />
+            </t-select>
           </t-form-item>
+
+          <!-- 区县 -->
           <t-form-item label="所属区县" name="districtCode">
-            <t-input v-model="form.districtCode" placeholder="请输入所属区县" clearable />
+            <t-select
+              v-model="form.districtCode"
+              placeholder="请选择区县"
+              clearable
+              filterable
+              :loading="districtLoading"
+              :disabled="!form.cityCode"
+            >
+              <t-option
+                v-for="d in districtList"
+                :key="d.id"
+                :label="d.extName"
+                :value="String(d.id)"
+              />
+            </t-select>
           </t-form-item>
           <t-form-item label="备注" name="remark">
             <t-input v-model="form.remark" placeholder="请输入备注" clearable />
@@ -365,7 +470,7 @@
           <t-form-item label="所属服务商id" name="providerId">
             <t-input-number v-model="form.providerId" placeholder="请输入" />
           </t-form-item>
-          <t-form-item label="保留字端" name="ext">
+          <!-- <t-form-item label="保留字端" name="ext">
             <t-textarea v-model="form.ext" placeholder="请输入保留字端" />
           </t-form-item>
           <t-form-item label="保留字端1" name="ext1">
@@ -376,7 +481,7 @@
           </t-form-item>
           <t-form-item label="保留字端3" name="ext3">
             <t-textarea v-model="form.ext3" placeholder="请输入保留字端3" />
-          </t-form-item>
+          </t-form-item> -->
         </t-form>
       </t-loading>
     </t-dialog>
@@ -425,10 +530,10 @@
         <t-descriptions-item label="上次接种日期">{{ parseTime(form.lastVaccination) }}</t-descriptions-item>
         <t-descriptions-item label="上次美容日期">{{ parseTime(form.lastCosmetic) }}</t-descriptions-item>
         <t-descriptions-item label="所属服务商id">{{ form.providerId }}</t-descriptions-item>
-        <t-descriptions-item label="保留字端" :span="2">{{ form.ext }}</t-descriptions-item>
+        <!-- <t-descriptions-item label="保留字端" :span="2">{{ form.ext }}</t-descriptions-item>
         <t-descriptions-item label="保留字端1" :span="2">{{ form.ext1 }}</t-descriptions-item>
         <t-descriptions-item label="保留字端2" :span="2">{{ form.ext2 }}</t-descriptions-item>
-        <t-descriptions-item label="保留字端3" :span="2">{{ form.ext3 }}</t-descriptions-item>
+        <t-descriptions-item label="保留字端3" :span="2">{{ form.ext3 }}</t-descriptions-item> -->
       </my-descriptions>
     </t-dialog>
   </t-card>
@@ -453,6 +558,8 @@ import { ArrayOps } from '@/utils/array';
 
 import type { PetInformationForm, PetInformationQuery, PetInformationVo } from '@/api/petFriendly/model/informationModel';
 import { listInformation, getInformation, delInformation, addInformation, updateInformation } from '@/api/petFriendly/information';
+
+import { listRegionInfo, getRegionInfo } from '@/api/system/regionInfo';
 
 // 生成 ['pet_information_breeds_1', ... , 'pet_information_breeds_11']
 const breedsKeys = Array.from({ length: 11 }, (_, i) => `pet_information_breeds_${i + 1}`);
@@ -501,9 +608,9 @@ const multiple = ref(true);
 const rules = ref<Record<string, Array<FormRule>>>({
   name: [{ required: true, message: '宠物昵称不能为空' }, { max: 100, message: '宠物昵称不能超过100个字符' }],
   petAvatar: [{ max: 100, message: '头像不能超过100个字符' }],
-  proviceCode: [{ max: 20, message: '所属省份不能超过20个字符' }],
-  cityCode: [{ max: 20, message: '所属城市不能超过20个字符' }],
-  districtCode: [{ max: 20, message: '所属区县不能超过20个字符' }],
+  proviceCode: [{ required: true, message: '所属省份不能为空' }],
+  cityCode: [{ required: true, message: '所属城市不能为空' }],
+  districtCode: [{ required: true, message: '所属区县不能为空' }],
   remark: [{ max: 200, message: '备注不能超过200个字符' }],
   petIdcard: [{ max: 50, message: '宠物证件号不能超过50个字符' }],
   contactName: [{ max: 30, message: '联系人昵称不能超过30个字符' }],
@@ -537,10 +644,10 @@ const columns = ref<Array<PrimaryTableCol>>([
   { title: `上次接种日期`, colKey: 'lastVaccination', align: 'center', minWidth: 112, width: 180 },
   { title: `上次美容日期`, colKey: 'lastCosmetic', align: 'center', minWidth: 112, width: 180 },
   { title: `所属服务商id`, colKey: 'providerId', align: 'center' },
-  { title: `保留字端`, colKey: 'ext', align: 'center', ellipsis: true },
-  { title: `保留字端1`, colKey: 'ext1', align: 'center', ellipsis: true },
-  { title: `保留字端2`, colKey: 'ext2', align: 'center', ellipsis: true },
-  { title: `保留字端3`, colKey: 'ext3', align: 'center', ellipsis: true },
+  // { title: `保留字端`, colKey: 'ext', align: 'center', ellipsis: true },
+  // { title: `保留字端1`, colKey: 'ext1', align: 'center', ellipsis: true },
+  // { title: `保留字端2`, colKey: 'ext2', align: 'center', ellipsis: true },
+  // { title: `保留字端3`, colKey: 'ext3', align: 'center', ellipsis: true },
   { title: `操作`, colKey: 'operation', align: 'center', width: 180 },
 ]);
 // 提交表单对象
@@ -717,6 +824,80 @@ function handleExport() {
     `information_${new Date().getTime()}.xlsx`,
   );
 }
+
+
+/** 查询行政区划管理列表 */
+import type { ChinaRegionInfoVo, ChinaRegionInfoQuery } from '@/api/system/model/regionInfoModel';
+/* -------------------- 基础数据 -------------------- */
+const provinceLoading = ref(false)
+const cityLoading = ref(false)
+const districtLoading = ref(false)
+
+const provinceList = ref<ChinaRegionInfoVo[]>([])
+const cityList     = ref<ChinaRegionInfoVo[]>([])
+const districtList = ref<ChinaRegionInfoVo[]>([])
+
+const regionQueryParams = ref<ChinaRegionInfoQuery>({
+  pageNum: 1,
+  pageSize: 100,
+  pid: undefined,
+  deep: undefined
+})
+
+/* -------------------- 通用加载方法 -------------------- */
+function fetchRegion(deep: 0 | 1 | 2, parentId?: string | number) {
+  deep == 0 ? provinceLoading.value = true : (deep == 1 ? cityLoading.value = true : districtLoading.value = true)
+  
+  regionQueryParams.value.pid = parentId ? Number(parentId) : null
+  regionQueryParams.value.deep = deep ? deep : null
+  
+  return listRegionInfo(regionQueryParams.value).finally(() => (deep == 0 ? provinceLoading.value = false : (deep == 1 ? cityLoading.value = false : districtLoading.value = false)))
+}
+
+/* -------------------- 联动 -------------------- */
+function onProvinceChange(val?: string) {
+  // 清空下级
+  queryParams.value.cityCode = ''
+  queryParams.value.districtCode = ''
+  form.value.cityCode = ''
+  form.value.districtCode = ''
+  cityList.value = []
+  districtList.value = []
+
+  if (!val) return
+  fetchRegion(1, val).then(res => (cityList.value = res.rows))
+}
+
+function onCityChange(val?: string) {
+  queryParams.value.districtCode = ''
+  form.value.districtCode = ''
+  districtList.value = []
+
+  if (!val) return
+  fetchRegion(2, val).then(res => (districtList.value = res.rows))
+}
+
+/* 缓存：只存已经查过的 id -> name */
+const cache = ref<Record<string, string>>({})
+
+async function loadName(id: string | number) {
+  if (!id) return ''
+  const key = String(id)
+  if (cache.value[key] !== undefined) return cache.value[key]
+
+  try {
+    const { data } = await getRegionInfo(Number(id))
+    cache.value[key] = data.extName ?? ''
+  } catch {
+    cache.value[key] = ''
+  }
+  return cache.value[key]
+}
+
+/* -------------------- 初始化 -------------------- */
+onMounted(() => {
+  fetchRegion(0).then(res => (provinceList.value = res.rows))
+})
 
 getList();
 </script>

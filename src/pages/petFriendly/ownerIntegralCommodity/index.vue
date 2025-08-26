@@ -30,7 +30,7 @@
         <t-form-item label="库存" name="inventory">
           <t-input v-model="queryParams.inventory" placeholder="请输入库存" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="保留字端" name="ext">
+        <!-- <t-form-item label="保留字端" name="ext">
           <t-input v-model="queryParams.ext" placeholder="请输入保留字端" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="保留字端1" name="ext1">
@@ -41,7 +41,7 @@
         </t-form-item>
         <t-form-item label="保留字端3" name="ext3">
           <t-input v-model="queryParams.ext3" placeholder="请输入保留字端3" clearable @enter="handleQuery" />
-        </t-form-item>
+        </t-form-item> -->
         <t-form-item label-width="0px">
           <t-button theme="primary" @click="handleQuery">
             <template #icon> <search-icon /></template>
@@ -186,7 +186,7 @@
           <t-form-item label="备注" name="remark">
             <t-input v-model="form.remark" placeholder="请输入备注" clearable />
           </t-form-item>
-          <t-form-item label="保留字端" name="ext">
+          <!-- <t-form-item label="保留字端" name="ext">
             <t-textarea v-model="form.ext" placeholder="请输入保留字端" />
           </t-form-item>
           <t-form-item label="保留字端1" name="ext1">
@@ -197,7 +197,7 @@
           </t-form-item>
           <t-form-item label="保留字端3" name="ext3">
             <t-textarea v-model="form.ext3" placeholder="请输入保留字端3" />
-          </t-form-item>
+          </t-form-item> -->
         </t-form>
       </t-loading>
     </t-dialog>
@@ -225,10 +225,10 @@
         <t-descriptions-item label="商品价值:积分">{{ form.commodityValue }}</t-descriptions-item>
         <t-descriptions-item label="库存">{{ form.inventory }}</t-descriptions-item>
         <t-descriptions-item label="备注">{{ form.remark }}</t-descriptions-item>
-        <t-descriptions-item label="保留字端" :span="2">{{ form.ext }}</t-descriptions-item>
+        <!-- <t-descriptions-item label="保留字端" :span="2">{{ form.ext }}</t-descriptions-item>
         <t-descriptions-item label="保留字端1" :span="2">{{ form.ext1 }}</t-descriptions-item>
         <t-descriptions-item label="保留字端2" :span="2">{{ form.ext2 }}</t-descriptions-item>
-        <t-descriptions-item label="保留字端3" :span="2">{{ form.ext3 }}</t-descriptions-item>
+        <t-descriptions-item label="保留字端3" :span="2">{{ form.ext3 }}</t-descriptions-item> -->
       </my-descriptions>
     </t-dialog>
   </t-card>
@@ -293,10 +293,10 @@ const columns = ref<Array<PrimaryTableCol>>([
   { title: `商品价值:积分`, colKey: 'commodityValue', align: 'center' },
   { title: `库存`, colKey: 'inventory', align: 'center' },
   { title: `备注`, colKey: 'remark', align: 'center' },
-  { title: `保留字端`, colKey: 'ext', align: 'center', ellipsis: true },
-  { title: `保留字端1`, colKey: 'ext1', align: 'center', ellipsis: true },
-  { title: `保留字端2`, colKey: 'ext2', align: 'center', ellipsis: true },
-  { title: `保留字端3`, colKey: 'ext3', align: 'center', ellipsis: true },
+  // { title: `保留字端`, colKey: 'ext', align: 'center', ellipsis: true },
+  // { title: `保留字端1`, colKey: 'ext1', align: 'center', ellipsis: true },
+  // { title: `保留字端2`, colKey: 'ext2', align: 'center', ellipsis: true },
+  // { title: `保留字端3`, colKey: 'ext3', align: 'center', ellipsis: true },
   { title: `操作`, colKey: 'operation', align: 'center', width: 180 },
 ]);
 // 提交表单对象
