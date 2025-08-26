@@ -53,9 +53,9 @@
             placeholder="请选择生日"
           />
         </t-form-item>
-        <t-form-item label="头像" name="petAvatar">
+        <!-- <t-form-item label="头像" name="petAvatar">
           <t-input v-model="queryParams.petAvatar" placeholder="请输入头像" clearable @enter="handleQuery" />
-        </t-form-item>
+        </t-form-item> -->
         <t-form-item label="排序" name="petSort">
           <t-input v-model="queryParams.petSort" placeholder="请输入排序" clearable @enter="handleQuery" />
         </t-form-item>
@@ -259,13 +259,13 @@
           <dict-tag :options="pet_owner_owner_type" :value="row.contactType" />
         </template>
         <template #proviceCode="{ row }">
-          <LazyRegionName :id="row.proviceCode" :loader="loadName" />
+          <LazyLoadName :id="row.proviceCode" :loader="loadName" />
         </template>
         <template #cityCode="{ row }">
-          <LazyRegionName :id="row.cityCode" :loader="loadName" />
+          <LazyLoadName :id="row.cityCode" :loader="loadName" />
         </template>
         <template #districtCode="{ row }">
-          <LazyRegionName :id="row.districtCode" :loader="loadName" />
+          <LazyLoadName :id="row.districtCode" :loader="loadName" />
         </template>
         <template #operation="{ row }">
           <t-space :size="8" break-line>
@@ -359,7 +359,12 @@
             />
           </t-form-item>
           <t-form-item label="头像" name="petAvatar">
-            <t-input v-model="form.petAvatar" placeholder="请输入头像" clearable />
+            <image-upload
+              v-model="form.petAvatar"
+              theme="image-flow"
+              :support-select-file="false"
+              :support-url="false"
+            />
           </t-form-item>
           <t-form-item label="排序" name="petSort">
             <t-input-number v-model="form.petSort" placeholder="请输入" />
@@ -555,6 +560,7 @@ import {
 import type { FormInstanceFunctions, FormRule, PageInfo, PrimaryTableCol, SubmitContext,  } from 'tdesign-vue-next';
 import { computed, getCurrentInstance, ref } from 'vue';
 import { ArrayOps } from '@/utils/array';
+import ImageUpload from '@/components/image-upload/index.vue';
 
 import type { PetInformationForm, PetInformationQuery, PetInformationVo } from '@/api/petFriendly/model/informationModel';
 import { listInformation, getInformation, delInformation, addInformation, updateInformation } from '@/api/petFriendly/information';

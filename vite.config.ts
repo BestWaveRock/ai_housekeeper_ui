@@ -143,7 +143,8 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         '/api': 'http://127.0.0.1:3000/',
         // https://cn.vitejs.dev/config/#server-proxy
         '/dev-api': {
-          target: 'http://localhost:8080',
+          // target: 'http://localhost:8080',
+          target: 'http://74.48.116.81:9999',
           changeOrigin: true,
           ws: true,
           rewrite: (p) => p.replace(/^\/dev-api/, ''),

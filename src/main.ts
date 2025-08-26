@@ -17,7 +17,7 @@ import ImagePreview from '@/components/image-preview/index.vue';
 // 图片上传组件
 import ImageUpload from '@/components/image-upload/index.vue';
 // 区域标签组件
-import LazyRegionName from '@/components/lazy-region-name/index.vue';
+import LazyLoadName from '@/components/lazy-load-name/index.vue';
 import { useDict } from '@/utils/dict';
 import { download } from '@/utils/request';
 import {

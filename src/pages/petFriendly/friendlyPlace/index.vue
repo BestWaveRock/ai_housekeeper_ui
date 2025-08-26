@@ -203,13 +203,13 @@
           <dict-tag :options="pet_friendly_place_place_level" :value="row.placeLevel" />
         </template>
         <template #proviceCode="{ row }">
-          <LazyRegionName :id="row.proviceCode" :loader="loadName" />
+          <LazyLoadName :id="row.proviceCode" :loader="loadName" />
         </template>
         <template #cityCode="{ row }">
-          <LazyRegionName :id="row.cityCode" :loader="loadName" />
+          <LazyLoadName :id="row.cityCode" :loader="loadName" />
         </template>
         <template #districtCode="{ row }">
-          <LazyRegionName :id="row.districtCode" :loader="loadName" />
+          <LazyLoadName :id="row.districtCode" :loader="loadName" />
         </template>
         <template #operation="{ row }">
           <t-space :size="8" break-line>
@@ -402,13 +402,13 @@
           <dict-tag :options="pet_friendly_place_place_level" :value="form.placeLevel" />
         </t-descriptions-item>
         <t-descriptions-item label="所属省份">
-          <LazyRegionName :id="form.proviceCode" :loader="loadName" />
+          <LazyLoadName :id="form.proviceCode" :loader="loadName" />
         </t-descriptions-item>
         <t-descriptions-item label="所属城市">
-          <LazyRegionName :id="form.cityCode" :loader="loadName" />
+          <LazyLoadName :id="form.cityCode" :loader="loadName" />
         </t-descriptions-item>
         <t-descriptions-item label="所属区县">
-          <LazyRegionName :id="form.districtCode" :loader="loadName" />
+          <LazyLoadName :id="form.districtCode" :loader="loadName" />
         </t-descriptions-item>
         <t-descriptions-item label="经度">{{ form.longitude }}</t-descriptions-item>
         <t-descriptions-item label="纬度">{{ form.latitude }}</t-descriptions-item>

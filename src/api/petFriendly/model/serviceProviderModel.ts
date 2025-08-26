@@ -16,7 +16,7 @@ export interface PetServiceProviderQuery extends BaseEntity {
   unitIdImg?: string;
   /** 单位地址 */
   unitAddress?: string;
-  /** 真实创建时间 */
+  /** 单位成立时间 */
   unitCreateTime?: any;
   /** 单位联系人id */
   contactUserId?: number;
@@ -77,7 +77,7 @@ export interface PetServiceProviderForm {
   unitIdImg?: string;
   /** 单位地址 */
   unitAddress?: string;
-  /** 真实创建时间 */
+  /** 单位成立时间 */
   unitCreateTime?: any;
   /** 单位联系人id */
   contactUserId?: number;
@@ -144,7 +144,7 @@ export interface PetServiceProviderVo {
   unitIdImg?: string;
   /** 单位地址 */
   unitAddress?: string;
-  /** 真实创建时间 */
+  /** 单位成立时间 */
   unitCreateTime?: any;
   /** 单位联系人id */
   contactUserId?: number;

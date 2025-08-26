@@ -393,9 +393,11 @@ function handleDelete({ file }: UploadRemoveContext) {
   const { ossId, name } = file;
   // 直接上传时，删除旧数据
   if (!effectiveSupportUrl.value && !props.supportSelectFile) {
-    delOss(ossId).then(() => {
-      proxy.$modal.msgSuccess(`文件【${name}】删除成功！`);
-    });
+    if (ossId) {
+      delOss(ossId).then(() => {
+        proxy.$modal.msgSuccess(`文件【${name}】删除成功！`);
+      });
+    }
   }
   const value = listToString(fileList.value);
   emit('update:modelValue', value);

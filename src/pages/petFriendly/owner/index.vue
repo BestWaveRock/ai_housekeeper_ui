@@ -43,9 +43,9 @@
             placeholder="请选择生日"
           />
         </t-form-item>
-        <t-form-item label="头像" name="petAvatar">
+        <!-- <t-form-item label="头像" name="petAvatar">
           <t-input v-model="queryParams.petAvatar" placeholder="请输入头像" clearable @enter="handleQuery" />
-        </t-form-item>
+        </t-form-item> -->
         <!-- 省份 -->
         <t-form-item label="所属省份" name="proviceCode">
           <t-select
@@ -241,13 +241,13 @@
           <dict-tag :options="pet_owner_sex" :value="row.sex" />
         </template>
         <template #proviceCode="{ row }">
-          <LazyRegionName :id="row.proviceCode" :loader="loadName" />
+          <LazyLoadName :id="row.proviceCode" :loader="loadName" />
         </template>
         <template #cityCode="{ row }">
-          <LazyRegionName :id="row.cityCode" :loader="loadName" />
+          <LazyLoadName :id="row.cityCode" :loader="loadName" />
         </template>
         <template #districtCode="{ row }">
-          <LazyRegionName :id="row.districtCode" :loader="loadName" />
+          <LazyLoadName :id="row.districtCode" :loader="loadName" />
         </template>
         <template #operation="{ row }">
           <t-space :size="8" break-line>
@@ -480,13 +480,13 @@
         <t-descriptions-item label="生日">{{ parseTime(form.birthday) }}</t-descriptions-item>
         <t-descriptions-item label="头像">{{ form.petAvatar }}</t-descriptions-item>
         <t-descriptions-item label="所属省份">
-          <LazyRegionName :id="form.proviceCode" :loader="loadName" />
+          <LazyLoadName :id="form.proviceCode" :loader="loadName" />
         </t-descriptions-item>
         <t-descriptions-item label="所属城市">
-          <LazyRegionName :id="form.cityCode" :loader="loadName" />
+          <LazyLoadName :id="form.cityCode" :loader="loadName" />
         </t-descriptions-item>
         <t-descriptions-item label="所属区县">
-          <LazyRegionName :id="form.districtCode" :loader="loadName" />
+          <LazyLoadName :id="form.districtCode" :loader="loadName" />
         </t-descriptions-item>
         <t-descriptions-item label="备注">{{ form.remark }}</t-descriptions-item>
         <t-descriptions-item label="证件号">{{ form.idcard }}</t-descriptions-item>

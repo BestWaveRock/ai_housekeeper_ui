@@ -236,13 +236,13 @@
           <dict-tag :options="pet_service_provider_service_level" :value="row.serviceLevel" />
         </template>
         <template #proviceCode="{ row }">
-          <LazyRegionName :id="row.proviceCode" :loader="loadName" />
+          <LazyLoadName :id="row.proviceCode" :loader="loadName" />
         </template>
         <template #cityCode="{ row }">
-          <LazyRegionName :id="row.cityCode" :loader="loadName" />
+          <LazyLoadName :id="row.cityCode" :loader="loadName" />
         </template>
         <template #districtCode="{ row }">
-          <LazyRegionName :id="row.districtCode" :loader="loadName" />
+          <LazyLoadName :id="row.districtCode" :loader="loadName" />
         </template>
         <template #operation="{ row }">
           <t-space :size="8" break-line>
@@ -471,13 +471,13 @@
         </t-descriptions-item>
         <t-descriptions-item label="综合评分">{{ form.rate }}</t-descriptions-item>
         <t-descriptions-item label="所属省份">
-          <LazyRegionName :id="form.proviceCode" :loader="loadName" />
+          <LazyLoadName :id="form.proviceCode" :loader="loadName" />
         </t-descriptions-item>
         <t-descriptions-item label="所属城市">
-          <LazyRegionName :id="form.cityCode" :loader="loadName" />
+          <LazyLoadName :id="form.cityCode" :loader="loadName" />
         </t-descriptions-item>
         <t-descriptions-item label="所属区县">
-          <LazyRegionName :id="form.districtCode" :loader="loadName" />
+          <LazyLoadName :id="form.districtCode" :loader="loadName" />
         </t-descriptions-item>
         <t-descriptions-item label="备注">{{ form.remark }}</t-descriptions-item>
         <t-descriptions-item label="联系人">{{ form.contactName }}</t-descriptions-item>

@@ -18,49 +18,62 @@
         <t-form-item label="单位名称" name="unitName">
           <t-input v-model="queryParams.unitName" placeholder="请输入单位名称" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="单位工商识别号" name="unitIdcard">
+        <t-form-item label="单位工商识别号" name="unitIdcard" :label-width="120">
           <t-input v-model="queryParams.unitIdcard" placeholder="请输入单位工商识别号" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="单位工商证件信息" name="unitIdImg">
+        <t-form-item label="单位工商证件信息" name="unitIdImg" :label-width="120">
           <t-input v-model="queryParams.unitIdImg" placeholder="请输入单位工商证件信息" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="单位地址" name="unitAddress">
           <t-input v-model="queryParams.unitAddress" placeholder="请输入单位地址" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="真实创建时间" name="unitCreateTime">
+        <t-form-item label="单位成立时间" name="unitCreateTime" :label-width="120">
           <t-date-picker
             v-model="queryParams.unitCreateTime"
             allow-input
             clearable
-            placeholder="请选择真实创建时间"
+            placeholder="请选择单位成立时间"
           />
         </t-form-item>
-        <t-form-item label="单位联系人id" name="contactUserId">
-          <t-input v-model="queryParams.contactUserId" placeholder="请输入单位联系人id" clearable @enter="handleQuery" />
+        <t-form-item label="单位联系人" name="contactUserId">
+          <t-select
+            v-model="queryParams.contactUserId"
+            placeholder="请选择单位联系人"
+            clearable @enter="handleQuery"
+            filterable
+            :loading="userLoading"
+          >
+            <t-option
+              v-for="user in userList"
+              :key="user.userId"
+              :label="user.nickName + '>>' + user.phonenumber"
+              :value="user.userId"
+            />
+          </t-select>
         </t-form-item>
-        <t-form-item label="单位联系人称呼" name="contactNick">
+        <t-form-item label="单位联系人称呼" name="contactNick" :label-width="120">
           <t-input v-model="queryParams.contactNick" placeholder="请输入单位联系人称呼" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="单位联系人名字" name="contactName">
+        <t-form-item label="单位联系人名字" name="contactName" :label-width="120">
           <t-input v-model="queryParams.contactName" placeholder="请输入单位联系人名字" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="单位联系人识别号" name="contactIdcard">
+        <t-form-item label="单位联系人识别号" name="contactIdcard" :label-width="120">
           <t-input v-model="queryParams.contactIdcard" placeholder="请输入单位联系人识别号" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="单位联系人真实证件信息" name="contactIdImg">
+        <t-form-item label="单位联系人真实证件信息" name="contactIdImg" :label-width="160">
           <t-input v-model="queryParams.contactIdImg" placeholder="请输入单位联系人真实证件信息" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="单位联系人联系方式" name="contactInformation">
+        <t-form-item label="单位联系人联系方式" name="contactInformation" :label-width="160">
           <t-input v-model="queryParams.contactInformation" placeholder="请输入单位联系人联系方式" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="单位联系人地址" name="contactAddress">
+        <t-form-item label="单位联系人地址" name="contactAddress" :label-width="120">
           <t-input v-model="queryParams.contactAddress" placeholder="请输入单位联系人地址" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="头像" name="unitAvatar">
+        <!-- <t-form-item label="头像" name="unitAvatar">
           <t-input v-model="queryParams.unitAvatar" placeholder="请输入头像" clearable @enter="handleQuery" />
-        </t-form-item>
+        </t-form-item> -->
         <!-- 省份 -->
-        <t-form-item label="所属省份" name="proviceCode">
+        <t-form-item label="所属省份" name="proviceCode" clearable @enter="handleQuery">
           <t-select
             v-model="queryParams.proviceCode"
             placeholder="请选择省份"
@@ -79,7 +92,7 @@
         </t-form-item>
 
         <!-- 城市 -->
-        <t-form-item label="所属城市" name="cityCode">
+        <t-form-item label="所属城市" name="cityCode" clearable @enter="handleQuery">
           <t-select
             v-model="queryParams.cityCode"
             placeholder="请选择城市"
@@ -99,7 +112,7 @@
         </t-form-item>
 
         <!-- 区县 -->
-        <t-form-item label="所属区县" name="districtCode">
+        <t-form-item label="所属区县" name="districtCode" clearable @enter="handleQuery">
           <t-select
             v-model="queryParams.districtCode"
             placeholder="请选择区县"
@@ -227,13 +240,16 @@
           <dict-tag :options="pet_service_provider_service_level" :value="row.serviceLevel" />
         </template>
         <template #proviceCode="{ row }">
-          <LazyRegionName :id="row.proviceCode" :loader="loadName" />
+          <LazyLoadName :id="row.proviceCode" :loader="loadName" />
         </template>
         <template #cityCode="{ row }">
-          <LazyRegionName :id="row.cityCode" :loader="loadName" />
+          <LazyLoadName :id="row.cityCode" :loader="loadName" />
         </template>
         <template #districtCode="{ row }">
-          <LazyRegionName :id="row.districtCode" :loader="loadName" />
+          <LazyLoadName :id="row.districtCode" :loader="loadName" />
+        </template>
+        <template #contactUserId="{ row }">
+          <LazyLoadName :id="row.contactUserId" :loader="loadUserName" />
         </template>
         <template #operation="{ row }">
           <t-space :size="8" break-line>
@@ -274,7 +290,7 @@
           scroll-to-first-error="smooth"
           @submit="submitForm"
         >
-          <t-form-item label="状态" name="status">
+          <t-form-item label="状态" name="status" v-if="form.providerId != undefined">
             <t-radio-group v-model="form.status">
               <t-radio
                 v-for="dict in pet_service_provider_status"
@@ -299,17 +315,30 @@
           <t-form-item label="单位地址" name="unitAddress">
             <t-input v-model="form.unitAddress" placeholder="请输入单位地址" clearable />
           </t-form-item>
-          <t-form-item label="真实创建时间" name="unitCreateTime">
+          <t-form-item label="单位成立时间" name="unitCreateTime">
             <t-date-picker
               v-model="form.unitCreateTime"
               enable-time-picker
               allow-input
               clearable
-              placeholder="请选择真实创建时间"
+              placeholder="请选择单位成立时间"
             />
           </t-form-item>
-          <t-form-item label="单位联系人id" name="contactUserId">
-            <t-input-number v-model="form.contactUserId" placeholder="请输入" />
+          <t-form-item label="单位联系人" name="contactUserId">
+            <t-select
+              v-model="form.contactUserId"
+              placeholder="请选择单位联系人"
+              clearable
+              filterable
+              :loading="userLoading"
+            >
+              <t-option
+                v-for="user in userList"
+                :key="user.userId"
+                :label="user.nickName + '>>' + user.phonenumber"
+                :value="user.userId"
+              />
+            </t-select>
           </t-form-item>
           <t-form-item label="单位联系人称呼" name="contactNick">
             <t-input v-model="form.contactNick" placeholder="请输入单位联系人称呼" clearable />
@@ -330,7 +359,12 @@
             <t-input v-model="form.contactAddress" placeholder="请输入单位联系人地址" clearable />
           </t-form-item>
           <t-form-item label="头像" name="unitAvatar">
-            <t-input v-model="form.unitAvatar" placeholder="请输入头像" clearable />
+            <image-upload
+              v-model="form.unitAvatar"
+              theme="image-flow"
+              :support-select-file="false"
+              :support-url="false"
+            />
           </t-form-item>
           <!-- 省份 -->
           <t-form-item label="所属省份" name="proviceCode">
@@ -450,8 +484,10 @@
         <t-descriptions-item label="单位工商识别号">{{ form.unitIdcard }}</t-descriptions-item>
         <t-descriptions-item label="单位工商证件信息">{{ form.unitIdImg }}</t-descriptions-item>
         <t-descriptions-item label="单位地址">{{ form.unitAddress }}</t-descriptions-item>
-        <t-descriptions-item label="真实创建时间">{{ parseTime(form.unitCreateTime) }}</t-descriptions-item>
-        <t-descriptions-item label="单位联系人id">{{ form.contactUserId }}</t-descriptions-item>
+        <t-descriptions-item label="单位成立时间">{{ parseTime(form.unitCreateTime) }}</t-descriptions-item>
+        <t-descriptions-item label="单位联系人">
+          <LazyLoadName :id="form.contactUserId" :loader="loadUserName" />
+        </t-descriptions-item>
         <t-descriptions-item label="单位联系人称呼">{{ form.contactNick }}</t-descriptions-item>
         <t-descriptions-item label="单位联系人名字">{{ form.contactName }}</t-descriptions-item>
         <t-descriptions-item label="单位联系人识别号">{{ form.contactIdcard }}</t-descriptions-item>
@@ -460,13 +496,13 @@
         <t-descriptions-item label="单位联系人地址">{{ form.contactAddress }}</t-descriptions-item>
         <t-descriptions-item label="头像">{{ form.unitAvatar }}</t-descriptions-item>
         <t-descriptions-item label="所属省份">
-          <LazyRegionName :id="form.proviceCode" :loader="loadName" />
+          <LazyLoadName :id="form.proviceCode" :loader="loadName" />
         </t-descriptions-item>
         <t-descriptions-item label="所属城市">
-          <LazyRegionName :id="form.cityCode" :loader="loadName" />
+          <LazyLoadName :id="form.cityCode" :loader="loadName" />
         </t-descriptions-item>
         <t-descriptions-item label="所属区县">
-          <LazyRegionName :id="form.districtCode" :loader="loadName" />
+          <LazyLoadName :id="form.districtCode" :loader="loadName" />
         </t-descriptions-item>
         <t-descriptions-item label="经度">{{ form.longitude }}</t-descriptions-item>
         <t-descriptions-item label="纬度">{{ form.latitude }}</t-descriptions-item>
@@ -501,6 +537,7 @@ import {
 import type { FormInstanceFunctions, FormRule, PageInfo, PrimaryTableCol, SubmitContext,  } from 'tdesign-vue-next';
 import { computed, getCurrentInstance, ref } from 'vue';
 import { ArrayOps } from '@/utils/array';
+import ImageUpload from '@/components/image-upload/index.vue';
 
 import type { PetServiceProviderForm, PetServiceProviderQuery, PetServiceProviderVo } from '@/api/petFriendly/model/serviceProviderModel';
 import { listServiceProvider, getServiceProvider, delServiceProvider, addServiceProvider, updateServiceProvider } from '@/api/petFriendly/serviceProvider';
@@ -527,11 +564,12 @@ const multiple = ref(true);
 
 // 校验规则
 const rules = ref<Record<string, Array<FormRule>>>({
-  unitNick: [{ max: 100, message: '单位称呼不能超过100个字符' }],
-  unitName: [{ max: 100, message: '单位名称不能超过100个字符' }],
+  unitNick: [{ required: true, message: '单位称呼不能为空' }, { max: 100, message: '单位称呼不能超过100个字符' }],
+  unitName: [{ required: true, message: '单位名称不能为空' }, { max: 100, message: '单位名称不能超过100个字符' }],
   unitIdcard: [{ max: 100, message: '单位工商识别号不能超过100个字符' }],
   unitIdImg: [{ max: 100, message: '单位工商证件信息不能超过100个字符' }],
   unitAddress: [{ max: 100, message: '单位地址不能超过100个字符' }],
+  contactUserId: [{ required: true, message: '单位联系人不能为空' }],
   contactNick: [{ max: 100, message: '单位联系人称呼不能超过100个字符' }],
   contactName: [{ max: 30, message: '单位联系人名字不能超过30个字符' }],
   contactIdcard: [{ max: 100, message: '单位联系人识别号不能超过100个字符' }],
@@ -556,8 +594,8 @@ const columns = ref<Array<PrimaryTableCol>>([
   { title: `单位工商识别号`, colKey: 'unitIdcard', align: 'center' },
   { title: `单位工商证件信息`, colKey: 'unitIdImg', align: 'center' },
   { title: `单位地址`, colKey: 'unitAddress', align: 'center' },
-  { title: `真实创建时间`, colKey: 'unitCreateTime', align: 'center', minWidth: 112, width: 180 },
-  { title: `单位联系人id`, colKey: 'contactUserId', align: 'center' },
+  { title: `单位成立时间`, colKey: 'unitCreateTime', align: 'center' },
+  { title: `单位联系人`, colKey: 'contactUserId', align: 'center' },
   { title: `单位联系人称呼`, colKey: 'contactNick', align: 'center' },
   { title: `单位联系人名字`, colKey: 'contactName', align: 'center' },
   { title: `单位联系人识别号`, colKey: 'contactIdcard', align: 'center' },
@@ -831,6 +869,52 @@ async function loadName(id: string | number) {
 onMounted(() => {
   fetchRegion(0).then(res => (provinceList.value = res.rows))
 })
+
+/* ---------  查询用户 ------- */
+import type { SysUserForm, SysUserQuery, SysUserVo } from '@/api/system/model/userModel';
+import {
+  getUser,
+  listUser,
+} from '@/api/system/user';
+
+const userQueryParams = ref<SysUserQuery>({
+  pageNum: 1,
+  pageSize: 100,
+  deptId: undefined
+})
+const userLoading = ref(false)
+const userList = ref<SysUserVo[]>([]);
+const dateRange = ref([]);
+
+function getUserList() {
+  userLoading.value = true;
+  listUser(proxy.addDateRange(userQueryParams.value, dateRange.value)).then((res) => {
+    userLoading.value = false;
+    userList.value = res.rows;
+  });
+}
+/* -------------------- 初始化 -------------------- */
+onMounted(() => {
+  getUserList()
+})
+
+/* 缓存：只存已经查过的 id -> name */
+const userCache = ref<Record<string, string>>({})
+
+async function loadUserName(id: string | number) {
+  if (!id) return ''
+  const key = String(id)
+  if (userCache.value[key] !== undefined) return userCache.value[key]
+
+  try {
+    const { data } = await getUser(Number(id))
+    userCache.value[key] = data.user.nickName ?? ''
+  } catch {
+    userCache.value[key] = ''
+  }
+  return userCache.value[key]
+}
+
 
 getList();
 </script>
