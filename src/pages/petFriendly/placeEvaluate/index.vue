@@ -45,9 +45,6 @@
         <t-form-item label="评语" name="comments">
           <t-input v-model="queryParams.comments" placeholder="请输入评语" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="评价附图" name="pictures">
-          <t-input v-model="queryParams.pictures" placeholder="请输入评价附图" clearable @enter="handleQuery" />
-        </t-form-item>
         <t-form-item label="评价时距离" name="distance">
           <t-input v-model="queryParams.distance" placeholder="请输入评价时距离" clearable @enter="handleQuery" />
         </t-form-item>
@@ -226,7 +223,12 @@
             <t-textarea v-model="form.comments" placeholder="请输入评语" />
           </t-form-item>
           <t-form-item label="评价附图" name="pictures">
-            <t-textarea v-model="form.pictures" placeholder="请输入评价附图" />
+            <image-upload
+              v-model="form.pictures"
+              theme="image-flow"
+              :support-select-file="false"
+              :support-url="false"
+            />
           </t-form-item>
           <t-form-item label="评价时距离" name="distance">
             <t-input-number v-model="form.distance" placeholder="请输入" />
@@ -313,6 +315,7 @@ import {
 import type { FormInstanceFunctions, FormRule, PageInfo, PrimaryTableCol, SubmitContext,  } from 'tdesign-vue-next';
 import { computed, getCurrentInstance, ref } from 'vue';
 import { ArrayOps } from '@/utils/array';
+import ImageUpload from '@/components/image-upload/index.vue';
 
 import type { PetPlaceEvaluateForm, PetPlaceEvaluateQuery, PetPlaceEvaluateVo } from '@/api/petFriendly/model/placeEvaluateModel';
 import { listPlaceEvaluate, getPlaceEvaluate, delPlaceEvaluate, addPlaceEvaluate, updatePlaceEvaluate } from '@/api/petFriendly/placeEvaluate';

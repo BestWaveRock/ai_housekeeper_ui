@@ -39,12 +39,6 @@
         <t-form-item label="服务副标题" name="subTitle">
           <t-input v-model="queryParams.subTitle" placeholder="请输入服务副标题" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="服务图标" name="icon">
-          <t-input v-model="queryParams.icon" placeholder="请输入服务图标" clearable @enter="handleQuery" />
-        </t-form-item>
-        <t-form-item label="服务主图" name="serviceMainPicture">
-          <t-input v-model="queryParams.serviceMainPicture" placeholder="请输入服务主图" clearable @enter="handleQuery" />
-        </t-form-item>
         <t-form-item label="跳转页面类型" name="jumpPageType">
           <t-select v-model="queryParams.jumpPageType" placeholder="请选择跳转页面类型" clearable>
             <t-option
@@ -320,10 +314,20 @@
             <t-input v-model="form.subTitle" placeholder="请输入服务副标题" clearable />
           </t-form-item>
           <t-form-item label="服务图标" name="icon">
-            <t-input v-model="form.icon" placeholder="请输入服务图标" clearable />
+            <image-upload
+              v-model="form.icon"
+              theme="image-flow"
+              :support-select-file="false"
+              :support-url="false"
+            />
           </t-form-item>
           <t-form-item label="服务主图" name="serviceMainPicture">
-            <t-input v-model="form.serviceMainPicture" placeholder="请输入服务主图" clearable />
+            <image-upload
+              v-model="form.serviceMainPicture"
+              theme="image-flow"
+              :support-select-file="false"
+              :support-url="false"
+            />
           </t-form-item>
           <t-form-item label="跳转页面类型" name="jumpPageType">
             <t-radio-group v-model="form.jumpPageType" placeholder="请选择跳转页面类型" clearable>
@@ -508,6 +512,7 @@ import {
 import type { FormInstanceFunctions, FormRule, PageInfo, PrimaryTableCol, SubmitContext,  } from 'tdesign-vue-next';
 import { computed, getCurrentInstance, ref } from 'vue';
 import { ArrayOps } from '@/utils/array';
+import ImageUpload from '@/components/image-upload/index.vue';
 
 import type { PetFriendlyServiceInfoForm, PetFriendlyServiceInfoQuery, PetFriendlyServiceInfoVo } from '@/api/petFriendly/model/friendlyServiceInfoModel';
 import { listFriendlyServiceInfo, getFriendlyServiceInfo, delFriendlyServiceInfo, addFriendlyServiceInfo, updateFriendlyServiceInfo } from '@/api/petFriendly/friendlyServiceInfo';

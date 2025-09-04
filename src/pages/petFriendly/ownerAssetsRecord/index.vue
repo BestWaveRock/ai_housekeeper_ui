@@ -76,9 +76,6 @@
         <t-form-item label="商品信息" name="commodityInformation">
           <t-input v-model="queryParams.commodityInformation" placeholder="请输入商品信息" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="商品图" name="commodityImg">
-          <t-input v-model="queryParams.commodityImg" placeholder="请输入商品图" clearable @enter="handleQuery" />
-        </t-form-item>
         <t-form-item label="商品价值:积分" name="commodityValue">
           <t-input v-model="queryParams.commodityValue" placeholder="请输入商品价值:积分" clearable @enter="handleQuery" />
         </t-form-item>
@@ -304,7 +301,12 @@
             <t-textarea v-model="form.commodityInformation" placeholder="请输入商品信息" />
           </t-form-item>
           <t-form-item label="商品图" name="commodityImg">
-            <t-textarea v-model="form.commodityImg" placeholder="请输入商品图" />
+            <image-upload
+              v-model="form.commodityImg"
+              theme="image-flow"
+              :support-select-file="false"
+              :support-url="false"
+            />
           </t-form-item>
           <t-form-item label="商品价值:积分" name="commodityValue">
             <t-input-number v-model="form.commodityValue" placeholder="请输入" />
@@ -411,6 +413,7 @@ import {
 import type { FormInstanceFunctions, FormRule, PageInfo, PrimaryTableCol, SubmitContext,  } from 'tdesign-vue-next';
 import { computed, getCurrentInstance, ref } from 'vue';
 import { ArrayOps } from '@/utils/array';
+import ImageUpload from '@/components/image-upload/index.vue';
 
 import type { PetOwnerAssetsRecordForm, PetOwnerAssetsRecordQuery, PetOwnerAssetsRecordVo } from '@/api/petFriendly/model/ownerAssetsRecordModel';
 import { listOwnerAssetsRecord, getOwnerAssetsRecord, delOwnerAssetsRecord, addOwnerAssetsRecord, updateOwnerAssetsRecord } from '@/api/petFriendly/ownerAssetsRecord';

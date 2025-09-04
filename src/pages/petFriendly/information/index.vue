@@ -515,7 +515,8 @@
           <dict-tag :options="pet_information_species" :value="form.species" />
         </t-descriptions-item>
         <t-descriptions-item label="宠物品种">
-          <dict-tag :options="breedsDicts[`pet_information_breeds_${form.species}`].value" :value="form.breeds" />
+          {{ form.species }}
+          <!-- <dict-tag :options="breedsDicts[`pet_information_breeds_${form.species}`].value" :value="form.breeds" /> -->
         </t-descriptions-item>
         <t-descriptions-item label="生日">{{ parseTime(form.birthday) }}</t-descriptions-item>
         <t-descriptions-item label="头像">{{ form.petAvatar }}</t-descriptions-item>

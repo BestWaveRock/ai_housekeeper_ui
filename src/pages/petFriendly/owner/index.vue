@@ -331,7 +331,12 @@
             />
           </t-form-item>
           <t-form-item label="头像" name="petAvatar">
-            <t-input v-model="form.petAvatar" placeholder="请输入头像" clearable />
+            <image-upload
+              v-model="form.petAvatar"
+              theme="image-flow"
+              :support-select-file="false"
+              :support-url="false"
+            />
           </t-form-item>
           <!-- 省份 -->
           <t-form-item label="所属省份" name="proviceCode">
@@ -529,6 +534,7 @@ import {
 import type { FormInstanceFunctions, FormRule, PageInfo, PrimaryTableCol, SubmitContext,  } from 'tdesign-vue-next';
 import { computed, getCurrentInstance, ref } from 'vue';
 import { ArrayOps } from '@/utils/array';
+import ImageUpload from '@/components/image-upload/index.vue';
 
 import type { PetOwnerForm, PetOwnerQuery, PetOwnerVo } from '@/api/petFriendly/model/ownerModel';
 import { listOwner, getOwner, delOwner, addOwner, updateOwner } from '@/api/petFriendly/owner';
