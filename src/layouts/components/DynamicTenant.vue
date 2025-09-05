@@ -27,8 +27,8 @@ import Company from '@/assets/icons/svg/company.svg?component';
 import { useTabsRouterStore, useUserStore } from '@/store';
 import { useTenantStore } from '@/store/modules/tenant';
 
-const { userId } = toRefs(useUserStore());
-const tenantId = ref(undefined);
+const { userId, tenantId } = toRefs(useUserStore());
+// const tenantId = ref(undefined);
 const tabsRouterStore = useTabsRouterStore();
 const router = useRouter();
 const { tenantEnabled, tenantList } = storeToRefs(useTenantStore());
