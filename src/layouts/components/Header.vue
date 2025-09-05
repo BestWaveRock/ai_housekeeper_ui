@@ -221,7 +221,7 @@ const navToGitHub = () => {
 };
 
 const navToHelper = () => {
-  window.open('http://tdesign.tencent.com/starter/docs/get-started');
+  window.open('https://help.biscuits.icu');
 };
 </script>
 <style lang="less" scoped>
