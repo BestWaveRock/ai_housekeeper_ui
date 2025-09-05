@@ -99,7 +99,7 @@
       </span>
     </div>
     <div style="display: flex; justify-content: flex-end; flex-direction: row">
-      <t-button shape="circle" variant="outline" title="微信登录" @click="doSocialLogin('wechat_open')">
+      <!-- <t-button shape="circle" variant="outline" title="微信登录" @click="doSocialLogin('wechat_open')">
         <logo-wechat-stroke-filled-icon style="color: #1aad19" />
       </t-button>
       <t-button shape="circle" variant="outline" title="QQ登录" @click="doSocialLogin('qq')">
@@ -113,7 +113,7 @@
       </t-button>
       <t-button shape="circle" variant="outline" title="Gitee登录" @click="doSocialLogin('gitee')">
         <gitee-svg class="t-icon" />
-      </t-button>
+      </t-button> -->
       <t-button shape="circle" variant="outline" title="Github登录" @click="doSocialLogin('github')">
         <logo-github-filled-icon />
       </t-button>
