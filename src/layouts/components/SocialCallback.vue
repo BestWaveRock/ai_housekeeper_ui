@@ -17,6 +17,7 @@ import { callback, login } from '@/api/login';
 import type { LoginData } from '@/api/model/loginModel';
 import Result from '@/components/result/index.vue';
 import { useUserStore } from '@/store';
+import { decryptBase64 } from '@/utils/crypto'
 
 const route = useRoute();
 const loading = ref(true);
@@ -32,7 +33,9 @@ const loadingText = ref('');
 const code = route.query.code as string;
 const state = route.query.state as string;
 const source = route.query.source as string;
-const stateJson = JSON.parse(atob(state));
+const json = decryptBase64(state)
+console.log(json)
+const stateJson = JSON.parse(json);
 
 const effectTenantId = computed(() =>
   (stateJson.tenantId as string) ? (stateJson.tenantId as string) : tenantId.value,

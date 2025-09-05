@@ -145,7 +145,7 @@ export function encryptBase64(str: WordArray) {
  * 解密base64
  */
 export function decryptBase64(str: string) {
-  return CryptoJS.enc.Base64.parse(str);
+  return CryptoJS.enc.Base64.parse(str).toString(CryptoJS.enc.Utf8);
 }
 
 /**
