@@ -33,6 +33,7 @@ defineOptions({
 });
 import { ref } from 'vue';
 
+import { getRegisterUserConfig } from '@/api/system/config';
 import TdesignSetting from '@/layouts/setting.vue';
 import { t } from '@/locales';
 
@@ -42,12 +43,24 @@ import Register from './components/Register.vue';
 
 const title = ref(import.meta.env.VITE_APP_TITLE);
 const companyName = ref(import.meta.env.VITE_APP_COMPANY_NAME);
+
 // 注册开关
 const registerOpen = ref(false);
+/**
+ * 注册开关
+ * @param type
+ */
+function getRegisterFlag() {
+  getRegisterUserConfig().then((res) => {
+    registerOpen.value = res.data;
+  });
+}
+
 const type = ref('login');
 const switchType = (val: string) => {
   type.value = val;
 };
+getRegisterFlag();
 </script>
 
 <style lang="less" scoped>

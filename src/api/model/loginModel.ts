@@ -88,6 +88,7 @@ export interface LoginBody {
  */
 export interface RegisterBody extends LoginBody {
   userType: string;
+  tenantId?: string;
 }
 /**
  * 租户列表

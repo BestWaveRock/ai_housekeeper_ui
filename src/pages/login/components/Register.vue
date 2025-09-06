@@ -56,7 +56,7 @@
     <template v-if="type === 'phone' || type === 'email'">
       <t-form-item class="verification-code" name="code">
         <t-input v-model="formData.code" size="large" placeholder="请输入验证码" />
-        <t-button variant="outline" :disabled="countDown > 0" @click="handleCounter">
+        <t-button variant="outline" :disabled="countDown > 0" @click="handleSendCode">
           {{ countDown === 0 ? '发送验证码' : `${countDown}秒后可重发` }}
         </t-button>
       </t-form-item>
@@ -76,8 +76,8 @@
     </template>
 
     <t-form-item class="check-container" name="checked">
-      <t-checkbox v-model="formData.checked">我已阅读并同意 </t-checkbox> <span>TDesign服务协议</span> 和
-      <span>TDesign 隐私声明</span>
+      <t-checkbox v-model="formData.checked">我已阅读并同意 </t-checkbox> <span>服务协议</span> 和
+      <span>隐私声明</span>
     </t-form-item>
 
     <t-form-item>
@@ -85,9 +85,9 @@
     </t-form-item>
 
     <div class="switch-container">
-      <span class="tip" @click="switchType(type === 'phone' ? 'email' : 'phone')">{{
+      <!-- <span class="tip" @click="switchType(type === 'phone' ? 'email' : 'phone')">{{
         type === 'phone' ? '使用邮箱注册' : '使用手机号注册'
-      }}</span>
+      }}</span> -->
     </div>
   </t-form>
 </template>
@@ -102,6 +102,7 @@ import { getCodeImg, getTenantList, register } from '@/api/login';
 import type { RegisterBody, TenantListVo } from '@/api/model/loginModel';
 import Company from '@/assets/icons/svg/company.svg?component';
 import { useCounter } from '@/hooks';
+import { request } from '@/utils/request';
 
 const equalToPassword = (value: string) => {
   return formData.value.password === value;
@@ -123,7 +124,7 @@ const FORM_RULES: Record<string, FormRule[]> = {
 };
 
 const loading = ref(false);
-const type = ref('phone');
+const type = ref('email');
 const codeUrl = ref('');
 const form = ref();
 const formData = ref({
@@ -146,7 +147,61 @@ const tenantEnabled = ref(true);
 const captchaEnabled = ref(true);
 const showPsw = ref(false);
 
+// 调用发出验证码接口
+const sendVerificationCode = async () => {
+  try {
+    let apiCall;
+    let params = {};
+    
+    if (type.value === 'phone') {
+      if (!formData.value.phone) {
+        MessagePlugin.error('请输入手机号');
+        return false;
+      }
+      if (!/^1[3-9]\d{9}$/.test(formData.value.phone)) {
+        MessagePlugin.error('请输入正确的手机号格式');
+        return false;
+      }
+      apiCall = () => request.get({
+        url: '/resource/sms/code?phone=' + formData.value.phone,
+      }, { withToken: false });
+    } else if (type.value === 'email') {
+      if (!formData.value.email) {
+        MessagePlugin.error('请输入邮箱地址');
+        return false;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.value.email)) {
+        MessagePlugin.error('请输入正确的邮箱格式');
+        return false;
+      }
+      apiCall = () => request.get({
+        url: '/resource/email/code?email=' + formData.value.email,
+      }, { withToken: false });
+    }
+    
+    if (apiCall) {
+      const response = await apiCall();
+      if (response.code === 200) {
+        MessagePlugin.success('验证码已发送，请注意查收');
+        return true;
+      } else {
+        MessagePlugin.error(response.msg || '发送失败');
+        return false;
+      }
+    }
+    return false;
+  } catch (error) {
+    MessagePlugin.error('发送验证码失败，请稍后重试');
+    return false;
+  }
+};
+
 const [countDown, handleCounter] = useCounter();
+
+const handleSendCode = async () => {
+  handleCounter();
+  await sendVerificationCode();
+};
 
 const emit = defineEmits(['registerSuccess']);
 
@@ -154,22 +209,23 @@ const { proxy } = getCurrentInstance();
 
 const onSubmit = (ctx: SubmitContext) => {
   if (ctx.validateResult === true) {
-    if (type.value === 'phone' || type.value === 'email') {
-      MessagePlugin.warning('暂不支持手机号与邮箱注册');
-      return;
-    }
+    // if (type.value === 'phone' || type.value === 'email') {
+    //   MessagePlugin.warning('暂不支持手机号与邮箱注册');
+    //   return;
+    // }
     if (!formData.value.checked) {
-      MessagePlugin.error('请同意TDesign服务协议和TDesign 隐私声明');
+      MessagePlugin.error('请同意服务协议和隐私声明');
       return;
     }
 
     loading.value = true;
     const registerForm: RegisterBody = {
-      username: formData.value.account,
+      username: type.value === 'email' ? formData.value.email : formData.value.phone,
       code: formData.value.code,
       password: formData.value.password,
       userType: 'sys_user',
-      uuid: formData.value.uuid,
+      uuid: type.value === 'email' ? formData.value.email : formData.value.phone,
+      tenantId: formData.value.tenantId,
     };
     register(registerForm)
       .then(() => {
@@ -222,7 +278,7 @@ function initTenantList() {
   });
 }
 
-getCode();
+// getCode();
 initTenantList();
 </script>
 

@@ -11,6 +11,7 @@
 
     <h3>你可以绑定以下第三方帐号</h3>
     <t-space>
+      <!--
       <t-button shape="circle" variant="outline" title="使用 微信 账号授权登录" @click="authUrl('wechat_open')">
         <template #icon>
           <logo-wechat-stroke-filled-icon style="color: #1aad19" />
@@ -36,6 +37,7 @@
           <gitee-svg class="t-icon" />
         </template>
       </t-button>
+      -->
       <t-button shape="circle" variant="outline" title="使用 GitHub 账号授权登录" @click="authUrl('github')">
         <template #icon>
           <logo-github-filled-icon />
