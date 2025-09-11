@@ -17,7 +17,7 @@ export function listRegionInfo(query?: ChinaRegionInfoQuery) {
  * 查询行政区划管理详细
  * @param id 主键
  */
-export function getRegionInfo(id: number) {
+export function getRegionInfo(id: string) {
   return request.get<R<ChinaRegionInfoVo>>({
     url: `/system/regionInfo/${id}`,
   });

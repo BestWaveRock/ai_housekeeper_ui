@@ -17,7 +17,7 @@ export function listOwnerIntegralCommodity(query?: PetOwnerIntegralCommodityQuer
  * 查询宠物主人积分兑换商品详细
  * @param integralCommodityId 主键
  */
-export function getOwnerIntegralCommodity(integralCommodityId: number) {
+export function getOwnerIntegralCommodity(integralCommodityId: string | number) {
   return request.get<R<PetOwnerIntegralCommodityVo>>({
     url: `/petFriendly/ownerIntegralCommodity/${integralCommodityId}`,
   });

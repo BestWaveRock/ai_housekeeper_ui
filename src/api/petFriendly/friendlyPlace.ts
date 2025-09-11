@@ -17,7 +17,7 @@ export function listFriendlyPlace(query?: PetFriendlyPlaceQuery) {
  * 查询宠物友好场所详细
  * @param placeId 主键
  */
-export function getFriendlyPlace(placeId: number) {
+export function getFriendlyPlace(placeId: string | number) {
   return request.get<R<PetFriendlyPlaceVo>>({
     url: `/petFriendly/friendlyPlace/${placeId}`,
   });

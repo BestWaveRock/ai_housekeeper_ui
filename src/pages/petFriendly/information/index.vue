@@ -116,10 +116,10 @@
             />
           </t-select>
         </t-form-item>
-        <t-form-item label="宠物证件号" name="petIdcard">
+        <t-form-item label="宠物证件号" name="petIdcard" label-width="100">
           <t-input v-model="queryParams.petIdcard" placeholder="请输入宠物证件号" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="联系人类型" name="contactType">
+        <t-form-item label="联系人类型" name="contactType" label-width="100">
           <t-select v-model="queryParams.contactType" placeholder="请选择联系人类型" clearable>
             <t-option
               v-for="dict in pet_owner_owner_type"
@@ -129,19 +129,24 @@
             ></t-option>
           </t-select>
         </t-form-item>
-        <t-form-item label="联系人id" name="contactUserId">
-          <t-input v-model="queryParams.contactUserId" placeholder="请输入联系人id" clearable @enter="handleQuery" />
+        <t-form-item label="选择联系人" name="contactUserId" label-width="100">
+          <t-input v-model="queryParams.contactUserId" placeholder="请选择联系人" @click="showQueryUser" @enter="handleQuery" clearable />
+          <select-user ref="queryUserRef" 
+            v-model="queryParams.contactUserId" 
+            v-model:user-id="queryParams.contactUserId" 
+            v-model:nick-name="queryParams.contactName"
+            select-type="single" />
         </t-form-item>
-        <t-form-item label="联系人昵称" name="contactName">
+        <t-form-item label="联系人昵称" name="contactName" label-width="100">
           <t-input v-model="queryParams.contactName" placeholder="请输入联系人昵称" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="联系方式" name="contactInformation">
           <t-input v-model="queryParams.contactInformation" placeholder="请输入联系方式" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="联系人地址" name="contactAddress">
+        <t-form-item label="联系人地址" name="contactAddress" label-width="100">
           <t-input v-model="queryParams.contactAddress" placeholder="请输入联系人地址" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="上次接种日期" name="lastVaccination">
+        <t-form-item label="上次接种日期" name="lastVaccination" label-width="110">
           <t-date-picker
             v-model="queryParams.lastVaccination"
             allow-input
@@ -149,7 +154,7 @@
             placeholder="请选择上次接种日期"
           />
         </t-form-item>
-        <t-form-item label="上次美容日期" name="lastCosmetic">
+        <t-form-item label="上次美容日期" name="lastCosmetic" label-width="110">
           <t-date-picker
             v-model="queryParams.lastCosmetic"
             allow-input
@@ -157,8 +162,24 @@
             placeholder="请选择上次美容日期"
           />
         </t-form-item>
-        <t-form-item label="所属服务商id" name="providerId">
-          <t-input v-model="queryParams.providerId" placeholder="请输入所属服务商id" clearable @enter="handleQuery" />
+        <t-form-item label="所属服务商" name="providerId" label-width="100">
+          <t-input
+              v-model="queryProviderLabel"
+              readonly
+              placeholder="请选择服务商"
+              @click="showQueryProvider"
+              @enter="handleQuery"
+              clearable
+            />
+            <!-- 弹窗选择器 -->
+            <select-provider
+              ref="queryProviderRef"
+              select-type="single"
+              v-model="queryParams.providerId" 
+              v-model:provider-id="queryParams.providerId" 
+              @update:provider-id="onQueryProviderId"
+              @update:unit-nick="onQueryProviderLabel"
+            />
         </t-form-item>
         <!-- <t-form-item label="保留字端" name="ext">
           <t-input v-model="queryParams.ext" placeholder="请输入保留字端" clearable @enter="handleQuery" />
@@ -253,7 +274,7 @@
           <dict-tag :options="pet_information_species" :value="row.species" />
         </template>
         <template #breeds="{ row }">
-          <dict-tag :options="breedsDicts[`pet_information_breeds_${row.species}`].value" :value="row.breeds" />
+          <dict-tag :options="row.species && breedsDicts[`pet_information_breeds_${row.species}`].value" :value="row.breeds" />
         </template>
         <template #contactType="{ row }">
           <dict-tag :options="pet_owner_owner_type" :value="row.contactType" />
@@ -266,6 +287,22 @@
         </template>
         <template #districtCode="{ row }">
           <LazyLoadName :id="row.districtCode" :loader="loadName" />
+        </template>
+        <!-- 服务商 -->
+        <template #providerId="{ row }">
+          <LazyLoadName :id="row.providerId" :loader="loadProviderName" />
+        </template>
+        <template #petAvatar="{ row }">
+          <!-- 图片预览 -->
+          <image-preview
+            v-if="row.petAvatar && checkFileSuffix(row.petAvatar)"
+            :src="row.petAvatar"
+            width="60px"
+            height="60px"
+          />
+          <t-tooltip v-else :content="row.petAvatar" placement="top">
+            <div class="t-text-ellipsis" v-text="row.petAvatar" />
+          </t-tooltip>
         </template>
         <template #operation="{ row }">
           <t-space :size="8" break-line>
@@ -443,7 +480,13 @@
             </t-select>
           </t-form-item>
           <t-form-item label="联系人id" name="contactUserId">
-            <t-input-number v-model="form.contactUserId" placeholder="请输入" />
+            <t-input v-model="form.contactUserId" readonly placeholder="请选择联系人" @click="showSelect" clearable />
+            <select-user ref="selectUserRef" 
+              v-model="form.contactUserId" 
+              v-model:user-id="form.contactUserId" 
+              v-model:nick-name="form.contactName" 
+              v-model:phone-number="form.contactInformation"
+              select-type="single" />
           </t-form-item>
           <t-form-item label="联系人昵称" name="contactName">
             <t-input v-model="form.contactName" placeholder="请输入联系人昵称" clearable />
@@ -472,8 +515,23 @@
               placeholder="请选择上次美容日期"
             />
           </t-form-item>
-          <t-form-item label="所属服务商id" name="providerId">
-            <t-input-number v-model="form.providerId" placeholder="请输入" />
+          <t-form-item label="所属服务商" name="providerId">
+            <t-input
+              v-model="providerLabel"
+              readonly
+              placeholder="请选择服务商"
+              @click="showSelectProvider"
+              clearable
+            />
+            <!-- 弹窗选择器 -->
+            <select-provider
+              ref="selectProviderRef"
+              select-type="single"
+              v-model="form.providerId" 
+              v-model:provider-id="form.providerId" 
+              @update:provider-id="onSelectProviderId"
+              @update:unit-nick="onSelectProviderLabel"
+            />
           </t-form-item>
           <!-- <t-form-item label="保留字端" name="ext">
             <t-textarea v-model="form.ext" placeholder="请输入保留字端" />
@@ -519,11 +577,28 @@
           <!-- <dict-tag :options="breedsDicts[`pet_information_breeds_${form.species}`].value" :value="form.breeds" /> -->
         </t-descriptions-item>
         <t-descriptions-item label="生日">{{ parseTime(form.birthday) }}</t-descriptions-item>
-        <t-descriptions-item label="头像">{{ form.petAvatar }}</t-descriptions-item>
+        <t-descriptions-item label="头像">
+          <!-- 图片预览 -->
+          <image-preview
+            v-if="form.petAvatar && checkFileSuffix(form.petAvatar)"
+            :src="form.petAvatar"
+            width="60px"
+            height="60px"
+          />
+          <t-tooltip v-else :content="form.petAvatar" placement="top">
+            <div class="t-text-ellipsis" v-text="form.petAvatar" />
+          </t-tooltip>
+        </t-descriptions-item>
         <t-descriptions-item label="排序">{{ form.petSort }}</t-descriptions-item>
-        <t-descriptions-item label="所属省份">{{ form.proviceCode }}</t-descriptions-item>
-        <t-descriptions-item label="所属城市">{{ form.cityCode }}</t-descriptions-item>
-        <t-descriptions-item label="所属区县">{{ form.districtCode }}</t-descriptions-item>
+        <t-descriptions-item label="所属省份">
+          <LazyLoadName :id="form.proviceCode" :loader="loadName" />
+        </t-descriptions-item>
+        <t-descriptions-item label="所属城市">
+          <LazyLoadName :id="form.cityCode" :loader="loadName" />
+        </t-descriptions-item>
+        <t-descriptions-item label="所属区县">
+          <LazyLoadName :id="form.districtCode" :loader="loadName" />
+        </t-descriptions-item>
         <t-descriptions-item label="备注">{{ form.remark }}</t-descriptions-item>
         <t-descriptions-item label="宠物证件号">{{ form.petIdcard }}</t-descriptions-item>
         <t-descriptions-item label="联系人类型">
@@ -535,7 +610,9 @@
         <t-descriptions-item label="联系人地址">{{ form.contactAddress }}</t-descriptions-item>
         <t-descriptions-item label="上次接种日期">{{ parseTime(form.lastVaccination) }}</t-descriptions-item>
         <t-descriptions-item label="上次美容日期">{{ parseTime(form.lastCosmetic) }}</t-descriptions-item>
-        <t-descriptions-item label="所属服务商id">{{ form.providerId }}</t-descriptions-item>
+        <t-descriptions-item label="所属服务商">
+          <LazyLoadName :id="form.providerId" :loader="loadProviderName" />
+        </t-descriptions-item>
         <!-- <t-descriptions-item label="保留字端" :span="2">{{ form.ext }}</t-descriptions-item>
         <t-descriptions-item label="保留字端1" :span="2">{{ form.ext1 }}</t-descriptions-item>
         <t-descriptions-item label="保留字端2" :span="2">{{ form.ext2 }}</t-descriptions-item>
@@ -562,11 +639,14 @@ import type { FormInstanceFunctions, FormRule, PageInfo, PrimaryTableCol, Submit
 import { computed, getCurrentInstance, ref } from 'vue';
 import { ArrayOps } from '@/utils/array';
 import ImageUpload from '@/components/image-upload/index.vue';
+import selectUser, { type SelectUserInstance } from '@/pages/petFriendly/components/selectUser.vue';
+import selectProvider, { type SelectServiceProviderInstance } from '@/pages/petFriendly/components/selectProvider.vue';
 
 import type { PetInformationForm, PetInformationQuery, PetInformationVo } from '@/api/petFriendly/model/informationModel';
 import { listInformation, getInformation, delInformation, addInformation, updateInformation } from '@/api/petFriendly/information';
 
 import { listRegionInfo, getRegionInfo } from '@/api/system/regionInfo';
+import { getServiceProvider } from '@/api/petFriendly/serviceProvider';
 
 // 生成 ['pet_information_breeds_1', ... , 'pet_information_breeds_11']
 const breedsKeys = Array.from({ length: 11 }, (_, i) => `pet_information_breeds_${i + 1}`);
@@ -610,6 +690,14 @@ const total = ref(0);
 const ids = ref([]);
 const single = ref(true);
 const multiple = ref(true);
+const selectUserRef = ref<SelectUserInstance>();
+const selectProviderRef = ref<SelectServiceProviderInstance>();
+const queryUserRef = ref<SelectUserInstance>();
+const queryProviderRef = ref<SelectServiceProviderInstance>();
+
+// 仅用来展示的名称
+const providerLabel = ref('')
+const queryProviderLabel= ref('')
 
 // 校验规则
 const rules = ref<Record<string, Array<FormRule>>>({
@@ -650,7 +738,7 @@ const columns = ref<Array<PrimaryTableCol>>([
   { title: `联系人地址`, colKey: 'contactAddress', align: 'center' },
   { title: `上次接种日期`, colKey: 'lastVaccination', align: 'center', minWidth: 112, width: 180 },
   { title: `上次美容日期`, colKey: 'lastCosmetic', align: 'center', minWidth: 112, width: 180 },
-  { title: `所属服务商id`, colKey: 'providerId', align: 'center' },
+  { title: `所属服务商`, colKey: 'providerId', align: 'center' },
   // { title: `保留字端`, colKey: 'ext', align: 'center', ellipsis: true },
   // { title: `保留字端1`, colKey: 'ext1', align: 'center', ellipsis: true },
   // { title: `保留字端2`, colKey: 'ext2', align: 'center', ellipsis: true },
@@ -717,6 +805,7 @@ function getList() {
 // 表单重置
 function reset() {
   form.value = {};
+  providerLabel.value = ''
   proxy.resetForm('informationRef');
 }
 
@@ -768,6 +857,18 @@ function handleUpdate(row?: PetInformationVo) {
   getInformation(petId).then((response) => {
     buttonLoading.value = false;
     form.value = response.data;
+    if (form.value.proviceCode) {
+      fetchRegion(1, form.value.proviceCode).then(res => (cityList.value = res.rows))
+    }
+    if (form.value.cityCode) {
+      fetchRegion(2, form.value.cityCode).then(res => (districtList.value = res.rows))
+    }
+    // 加载内容
+    if (form.value.providerId) {
+      getServiceProvider(form.value.providerId).then(response => {
+        providerLabel.value = response.data.unitNick
+      })
+    }
   });
 }
 
@@ -784,6 +885,7 @@ function submitForm({ validateResult, firstError }: SubmitContext) {
           getList();
         })
         .finally(() => {
+          providerLabel.value = ''
           buttonLoading.value = false;
           proxy.$modal.msgClose(msgLoading);
         });
@@ -795,6 +897,7 @@ function submitForm({ validateResult, firstError }: SubmitContext) {
           getList();
         })
         .finally(() => {
+          providerLabel.value = ''
           buttonLoading.value = false;
           proxy.$modal.msgClose(msgLoading);
         });
@@ -893,7 +996,7 @@ async function loadName(id: string | number) {
   if (cache.value[key] !== undefined) return cache.value[key]
 
   try {
-    const { data } = await getRegionInfo(Number(id))
+    const { data } = await getRegionInfo(String(id))
     cache.value[key] = data.extName ?? ''
   } catch {
     cache.value[key] = ''
@@ -901,6 +1004,57 @@ async function loadName(id: string | number) {
   return cache.value[key]
 }
 
+// 联系人、用户
+function showSelect() {
+  selectUserRef.value.show();
+}
+function showQueryUser() {
+  queryUserRef.value.show();
+}
+
+// 服务商
+const providerCache = ref<Record<string, string>>({})
+
+async function loadProviderName(id: string | number) {
+  if (!id) return ''
+  const key = String(id)
+  if (providerCache.value[key] !== undefined) return providerCache.value[key]
+
+  try {
+    const { data } = await getServiceProvider(String(id))
+    providerCache.value[key] = data.unitNick ?? ''
+  } catch {
+    providerCache.value[key] = ''
+  }
+  return providerCache.value[key]
+}
+
+function showSelectProvider() {
+  selectProviderRef.value.show()
+}
+function showQueryProvider() {
+  queryProviderRef.value.show()
+}
+// 选中回调
+function onSelectProviderId(id?:number) {
+  form.value.providerId = id          // 提交用
+}
+function onSelectProviderLabel(name?:string) {
+  providerLabel.value = name    // 展示用
+}
+function onQueryProviderId(id?:number) {
+  queryParams.value.providerId = id          // 提交用
+}
+function onQueryProviderLabel(name?:string) {
+  queryProviderLabel.value = name    // 展示用
+}
+// 图片预览
+function checkFileSuffix(fileSuffix: string | string[]) {
+  const arr = ['png', 'jpg', 'jpeg', 'ico', 'bmp', 'webp', 'gif', 'svg'];
+  return arr.some((type) => {
+    return fileSuffix.indexOf(type) > -1;
+  });
+}
 /* -------------------- 初始化 -------------------- */
 onMounted(() => {
   fetchRegion(0).then(res => (provinceList.value = res.rows))

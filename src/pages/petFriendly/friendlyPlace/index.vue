@@ -1,3 +1,4 @@
+<!-- 宠物友好场所 -->
 <template>
   <t-card>
     <t-space direction="vertical" style="width: 100%">
@@ -107,8 +108,24 @@
         <t-form-item label="联系方式" name="contactInformation">
           <t-input v-model="queryParams.contactInformation" placeholder="请输入联系方式" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="所属服务商id" name="providerId">
-          <t-input v-model="queryParams.providerId" placeholder="请输入所属服务商id" clearable @enter="handleQuery" />
+        <t-form-item label="所属服务商" name="providerId" label-width="90">
+          <t-input
+              v-model="queryProviderLabel"
+              readonly
+              placeholder="请选择服务商"
+              @click="showQueryProvider"
+              @enter="handleQuery"
+              clearable
+            />
+            <!-- 弹窗选择器 -->
+            <select-provider
+              ref="queryProviderRef"
+              select-type="single"
+              v-model="queryParams.providerId" 
+              v-model:provider-id="queryParams.providerId" 
+              @update:provider-id="onQueryProviderId"
+              @update:unit-nick="onQueryProviderLabel"
+            />
         </t-form-item>
         <!-- <t-form-item label="保留字端" name="ext">
           <t-input v-model="queryParams.ext" placeholder="请输入保留字端" clearable @enter="handleQuery" />
@@ -210,6 +227,10 @@
         </template>
         <template #districtCode="{ row }">
           <LazyLoadName :id="row.districtCode" :loader="loadName" />
+        </template>
+        <!-- 服务商 -->
+        <template #providerId="{ row }">
+          <LazyLoadName :id="row.providerId" :loader="loadProviderName" />
         </template>
         <template #operation="{ row }">
           <t-space :size="8" break-line>
@@ -358,8 +379,24 @@
           <t-form-item label="联系方式" name="contactInformation">
             <t-input v-model="form.contactInformation" placeholder="请输入联系方式" clearable />
           </t-form-item>
-          <t-form-item label="所属服务商id" name="providerId">
-            <t-input-number v-model="form.providerId" placeholder="请输入" />
+          <t-form-item label="所属服务商" name="providerId">
+            <!-- <t-input-number v-model="form.providerId" placeholder="请输入" /> -->
+            <t-input
+              v-model="providerLabel"
+              readonly
+              placeholder="请选择服务商"
+              @click="showSelectProvider"
+              clearable
+            />
+            <!-- 弹窗选择器 -->
+            <select-provider
+              ref="selectProviderRef"
+              select-type="single"
+              v-model="form.providerId" 
+              v-model:provider-id="form.providerId" 
+              @update:provider-id="onSelectProviderId"
+              @update:unit-nick="onSelectProviderLabel"
+            />
           </t-form-item>
           <!-- <t-form-item label="保留字端" name="ext">
             <t-textarea v-model="form.ext" placeholder="请输入保留字端" />
@@ -415,7 +452,9 @@
         <t-descriptions-item label="备注">{{ form.remark }}</t-descriptions-item>
         <t-descriptions-item label="联系人">{{ form.contactName }}</t-descriptions-item>
         <t-descriptions-item label="联系方式">{{ form.contactInformation }}</t-descriptions-item>
-        <t-descriptions-item label="所属服务商id">{{ form.providerId }}</t-descriptions-item>
+        <t-descriptions-item label="所属服务商">
+          <LazyLoadName :id="form.providerId" :loader="loadProviderName" />
+        </t-descriptions-item>
         <!-- <t-descriptions-item label="保留字端" :span="2">{{ form.ext }}</t-descriptions-item>
         <t-descriptions-item label="保留字端1" :span="2">{{ form.ext1 }}</t-descriptions-item>
         <t-descriptions-item label="保留字端2" :span="2">{{ form.ext2 }}</t-descriptions-item>
@@ -441,11 +480,13 @@ import {
 import type { FormInstanceFunctions, FormRule, PageInfo, PrimaryTableCol, SubmitContext,  } from 'tdesign-vue-next';
 import { computed, getCurrentInstance, ref } from 'vue';
 import { ArrayOps } from '@/utils/array';
+import selectProvider, { type SelectServiceProviderInstance } from '@/pages/petFriendly/components/selectProvider.vue';
 
 import type { PetFriendlyPlaceForm, PetFriendlyPlaceQuery, PetFriendlyPlaceVo } from '@/api/petFriendly/model/friendlyPlaceModel';
 import { listFriendlyPlace, getFriendlyPlace, delFriendlyPlace, addFriendlyPlace, updateFriendlyPlace } from '@/api/petFriendly/friendlyPlace';
 
 import { listRegionInfo, getRegionInfo } from '@/api/system/regionInfo';
+import { getServiceProvider } from '@/api/petFriendly/serviceProvider';
 
 const { proxy } = getCurrentInstance();
 const { pet_friendly_place_type, pet_friendly_place_status, pet_friendly_place_place_level } = proxy.useDict('pet_friendly_place_type', 'pet_friendly_place_status', 'pet_friendly_place_place_level');
@@ -464,6 +505,12 @@ const total = ref(0);
 const ids = ref([]);
 const single = ref(true);
 const multiple = ref(true);
+const selectProviderRef = ref<SelectServiceProviderInstance>();
+const queryProviderRef = ref<SelectServiceProviderInstance>();
+
+// 仅用来展示的名称
+const providerLabel = ref('')
+const queryProviderLabel= ref('')
 
 // 校验规则
 const rules = ref<Record<string, Array<FormRule>>>({
@@ -495,7 +542,7 @@ const columns = ref<Array<PrimaryTableCol>>([
   { title: `备注`, colKey: 'remark', align: 'center' },
   { title: `联系人`, colKey: 'contactName', align: 'center' },
   { title: `联系方式`, colKey: 'contactInformation', align: 'center' },
-  { title: `所属服务商id`, colKey: 'providerId', align: 'center' },
+  { title: `所属服务商`, colKey: 'providerId', align: 'center' },
   // { title: `保留字端`, colKey: 'ext', align: 'center', ellipsis: true },
   // { title: `保留字端1`, colKey: 'ext1', align: 'center', ellipsis: true },
   // { title: `保留字端2`, colKey: 'ext2', align: 'center', ellipsis: true },
@@ -555,6 +602,7 @@ function getList() {
 // 表单重置
 function reset() {
   form.value = {};
+  providerLabel.value = ''
   proxy.resetForm('friendlyPlaceRef');
 }
 
@@ -606,8 +654,18 @@ function handleUpdate(row?: PetFriendlyPlaceVo) {
   getFriendlyPlace(placeId).then((response) => {
     buttonLoading.value = false;
     form.value = response.data;
-    fetchRegion(1, form.value.proviceCode).then(res => (cityList.value = res.rows))
-    fetchRegion(2, form.value.cityCode).then(res => (districtList.value = res.rows))
+    if (form.value.proviceCode) {
+      fetchRegion(1, form.value.proviceCode).then(res => (cityList.value = res.rows))
+    }
+    if (form.value.cityCode) {
+      fetchRegion(2, form.value.cityCode).then(res => (districtList.value = res.rows))
+    }
+    // 加载内容
+    if (form.value.providerId) {
+      getServiceProvider(form.value.providerId).then(response => {
+        providerLabel.value = response.data.unitNick
+      })
+    }
   });
 }
 
@@ -624,6 +682,7 @@ function submitForm({ validateResult, firstError }: SubmitContext) {
           getList();
         })
         .finally(() => {
+          providerLabel.value = ''
           buttonLoading.value = false;
           proxy.$modal.msgClose(msgLoading);
         });
@@ -635,6 +694,7 @@ function submitForm({ validateResult, firstError }: SubmitContext) {
           getList();
         })
         .finally(() => {
+          providerLabel.value = ''
           buttonLoading.value = false;
           proxy.$modal.msgClose(msgLoading);
         });
@@ -733,12 +793,48 @@ async function loadName(id: string | number) {
   if (cache.value[key] !== undefined) return cache.value[key]
 
   try {
-    const { data } = await getRegionInfo(Number(id))
+    const { data } = await getRegionInfo(String(id))
     cache.value[key] = data.extName ?? ''
   } catch {
     cache.value[key] = ''
   }
   return cache.value[key]
+}
+
+const providerCache = ref<Record<string, string>>({})
+
+async function loadProviderName(id: string | number) {
+  if (!id) return ''
+  const key = String(id)
+  if (providerCache.value[key] !== undefined) return providerCache.value[key]
+
+  try {
+    const { data } = await getServiceProvider(String(id))
+    providerCache.value[key] = data.unitNick ?? ''
+  } catch {
+    providerCache.value[key] = ''
+  }
+  return providerCache.value[key]
+}
+
+function showSelectProvider() {
+  selectProviderRef.value.show()
+}
+function showQueryProvider() {
+  queryProviderRef.value.show()
+}
+// 选中回调
+function onSelectProviderId(id?:number) {
+  form.value.providerId = id          // 提交用
+}
+function onSelectProviderLabel(name?:string) {
+  providerLabel.value = name    // 展示用
+}
+function onQueryProviderId(id?:number) {
+  queryParams.value.providerId = id          // 提交用
+}
+function onQueryProviderLabel(name?:string) {
+  queryProviderLabel.value = name    // 展示用
 }
 
 /* -------------------- 初始化 -------------------- */

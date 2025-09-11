@@ -17,7 +17,7 @@ export function listFriendlyServiceInfo(query?: PetFriendlyServiceInfoQuery) {
  * 查询宠物友好服务信息详细
  * @param serviceId 主键
  */
-export function getFriendlyServiceInfo(serviceId: number) {
+export function getFriendlyServiceInfo(serviceId: string | number) {
   return request.get<R<PetFriendlyServiceInfoVo>>({
     url: `/petFriendly/friendlyServiceInfo/${serviceId}`,
   });

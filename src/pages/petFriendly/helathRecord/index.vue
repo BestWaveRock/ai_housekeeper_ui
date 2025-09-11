@@ -12,26 +12,153 @@
             ></t-option>
           </t-select>
         </t-form-item>
-        <t-form-item label="主人id" name="ownerId">
-          <t-input v-model="queryParams.ownerId" placeholder="请输入主人id" clearable @enter="handleQuery" />
+        <t-form-item label="主人翁" name="ownerId">
+          <t-select
+            ref="refOwnerSelect"
+            v-model="queryParams.ownerId"
+            placeholder="请选择主人翁"
+            clearable @enter="handleQuery"
+            filterable
+            :loading="ownerLoading"
+            :popup-props="popupPropsOwner"
+            @search="handleOwnerSearch"
+            reserve-keyword
+          >
+            <!-- 空状态 -->
+            <t-option
+              v-if="ownerList.length === 0"
+              :value="''"
+              label=""
+              disabled
+            >
+              <span v-if="ownerLoading">加载中...</span>
+              <span v-else>暂无数据</span>
+            </t-option>
+            <t-option
+              v-for="item in ownerList"
+              :key="item.ownerId"
+              :label="item.name + ' >> ' + item.contactInformation"
+              :value="item.ownerId"
+            />
+          </t-select>
         </t-form-item>
-        <t-form-item label="用户id" name="userId">
-          <t-input v-model="queryParams.userId" placeholder="请输入用户id" clearable @enter="handleQuery" />
+        <t-form-item label="用户" name="userId">
+          <t-select
+            v-model="queryParams.userId"
+            placeholder="请选择用户"
+            clearable @enter="handleQuery"
+            filterable
+            :loading="userLoading"
+            :popup-props="popupPropsUser"
+            @search="handleUserSearch"
+            reserve-keyword
+          >
+            <!-- 空状态 -->
+            <template v-if="!userList.length && !userLoading" #empty>
+              暂无数据
+            </template>
+            <t-option
+              v-for="item in userList"
+              :key="item.userId"
+              :label="item.nickName + ' >> ' + item.phonenumber"
+              :value="item.userId"
+            />
+          </t-select>
         </t-form-item>
-        <t-form-item label="场所id" name="placeId">
-          <t-input v-model="queryParams.placeId" placeholder="请输入场所id" clearable @enter="handleQuery" />
+        <t-form-item label="友好场所" name="placeId">
+          <t-select
+            v-model="queryParams.placeId"
+            placeholder="请选择友好场所"
+            clearable @enter="handleQuery"
+            filterable
+            :loading="placeLoading"
+            :popup-props="popupPropsPlace"
+            @search="handlePlaceSearch"
+            reserve-keyword
+          >
+            <t-option
+              v-for="item in placeList"
+              :key="item.placeId"
+              :label="item.name"
+              :value="item.placeId"
+            />
+          </t-select>
         </t-form-item>
-        <t-form-item label="宠物id" name="petId">
-          <t-input v-model="queryParams.petId" placeholder="请输入宠物id" clearable @enter="handleQuery" />
+        <t-form-item label="宠物" name="petId">
+          <t-select
+            v-model="queryParams.petId"
+            placeholder="请选择宠物"
+            clearable @enter="handleQuery"
+            filterable
+            :loading="petLoading"
+            :popup-props="popupPropsPet"
+            @search="handlePetSearch"
+            reserve-keyword
+          >
+            <t-option
+              v-for="item in petList"
+              :key="item.petId"
+              :label="item.name + (item.petIdcard ? ' >> ' + item.petIdcard : '')"
+              :value="item.petId"
+            />
+          </t-select>
         </t-form-item>
-        <t-form-item label="服务商id" name="providerId">
-          <t-input v-model="queryParams.providerId" placeholder="请输入服务商id" clearable @enter="handleQuery" />
+        <t-form-item label="服务商" name="providerId">
+          <t-select
+            v-model="queryParams.petId"
+            placeholder="请选择服务商"
+            clearable @enter="handleQuery"
+            filterable
+            :loading="providerLoading"
+            :popup-props="popupPropsProvider"
+            @search="handleProviderSearch"
+            reserve-keyword
+          >
+            <t-option
+              v-for="item in providerList"
+              :key="item.providerId"
+              :label="item.unitNick + (item.unitName ? ' >> ' + item.unitName : '')"
+              :value="item.providerId"
+            />
+          </t-select>
         </t-form-item>
-        <t-form-item label="服务商人员id" name="providerOwnerId">
-          <t-input v-model="queryParams.providerOwnerId" placeholder="请输入服务商人员id" clearable @enter="handleQuery" />
+        <t-form-item label="服务商人员" name="providerOwnerId" label-width=100>
+          <t-select
+            v-model="queryParams.providerOwnerId"
+            placeholder="请选择服务商人员"
+            clearable @enter="handleQuery"
+            filterable
+            :loading="providerOwnerLoading"
+            :popup-props="popupPropsProviderOwner"
+            @search="handleProviderOwnerSearch"
+            reserve-keyword
+          >
+            <t-option
+              v-for="item in providerOwnerList"
+              :key="item.ownerId"
+              :label="item.name + ' >> ' + item.contactInformation"
+              :value="item.ownerId"
+            />
+          </t-select>
         </t-form-item>
-        <t-form-item label="服务商人员用户id" name="providerUserId">
-          <t-input v-model="queryParams.providerUserId" placeholder="请输入服务商人员用户id" clearable @enter="handleQuery" />
+        <t-form-item label="服务商用户" name="providerUserId" label-width="140">
+          <t-select
+            v-model="queryParams.providerUserId"
+            placeholder="请选择服务商用户"
+            clearable @enter="handleQuery"
+            filterable
+            :loading="providerUserLoading"
+            :popup-props="popupPropsProviderUser"
+            @search="handleProviderUserSearch"
+            reserve-keyword
+          >
+            <t-option
+              v-for="item in providerUserList"
+              :key="item.userId"
+              :label="item.nickName + ' >> ' + item.phonenumber"
+              :value="item.userId"
+            />
+          </t-select>
         </t-form-item>
         <t-form-item label="档案类型" name="type">
           <t-select v-model="queryParams.type" placeholder="请选择档案类型" clearable>
@@ -66,7 +193,7 @@
         <t-form-item label="退回金额" name="refundAmount">
           <t-input v-model="queryParams.refundAmount" placeholder="请输入退回金额" clearable @enter="handleQuery" />
         </t-form-item>
-        <t-form-item label="实际交易金额" name="actualAmount">
+        <t-form-item label="实际交易金额" name="actualAmount" label-width="120">
           <t-input v-model="queryParams.actualAmount" placeholder="请输入实际交易金额" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="记录IP" name="ip">
@@ -213,26 +340,138 @@
               ></t-radio>
             </t-radio-group>
           </t-form-item>
-          <t-form-item label="主人id" name="ownerId">
-            <t-input-number v-model="form.ownerId" placeholder="请输入" />
+          <t-form-item label="主人翁" name="ownerId">
+            <t-select
+              v-model="form.ownerId"
+              placeholder="请选择主人翁"
+              clearable @enter="handleQuery"
+              filterable
+              :loading="ownerLoading"
+              :popup-props="popupPropsOwner"
+              @search="handleOwnerSearch"
+              reserve-keyword
+            >
+              <t-option
+                v-for="item in ownerList"
+                :key="item.ownerId"
+                :label="item.name + ' >> ' + item.contactInformation"
+                :value="item.ownerId"
+              />
+            </t-select>
           </t-form-item>
-          <t-form-item label="用户id" name="userId">
-            <t-input-number v-model="form.userId" placeholder="请输入" />
+          <t-form-item label="用户" name="userId">
+            <t-select
+              v-model="form.userId"
+              placeholder="请选择用户"
+              clearable @enter="handleQuery"
+              filterable
+              :loading="userLoading"
+              :popup-props="popupPropsUser"
+              @search="handleUserSearch"
+              reserve-keyword
+            >
+              <t-option
+                v-for="item in userList"
+                :key="item.userId"
+                :label="item.nickName + ' >> ' + item.phonenumber"
+                :value="item.userId"
+              />
+            </t-select>
           </t-form-item>
-          <t-form-item label="场所id" name="placeId">
-            <t-input-number v-model="form.placeId" placeholder="请输入" />
+          <t-form-item label="友好场所" name="placeId">
+            <t-select
+              v-model="form.placeId"
+              placeholder="请选择友好场所"
+              clearable @enter="handleQuery"
+              filterable
+              :loading="placeLoading"
+              :popup-props="popupPropsPlace"
+              @search="handlePlaceSearch"
+              reserve-keyword
+            >
+              <t-option
+                v-for="item in placeList"
+                :key="item.placeId"
+                :label="item.name"
+                :value="item.placeId"
+              />
+            </t-select>
           </t-form-item>
-          <t-form-item label="宠物id" name="petId">
-            <t-input-number v-model="form.petId" placeholder="请输入" />
+          <t-form-item label="宠物" name="petId">
+            <t-select
+              v-model="form.petId"
+              placeholder="请选择宠物"
+              clearable @enter="handleQuery"
+              filterable
+              :loading="petLoading"
+              :popup-props="popupPropsPet"
+              @search="handlePetSearch"
+              reserve-keyword
+            >
+              <t-option
+                v-for="item in petList"
+                :key="item.petId"
+                :label="item.name + (item.petIdcard ? ' >> ' + item.petIdcard : '')"
+                :value="item.petId"
+              />
+            </t-select>
           </t-form-item>
-          <t-form-item label="服务商id" name="providerId">
-            <t-input-number v-model="form.providerId" placeholder="请输入" />
+          <t-form-item label="服务商" name="providerId">
+            <t-select
+              v-model="form.providerId"
+              placeholder="请选择服务商"
+              clearable @enter="handleQuery"
+              filterable
+              :loading="providerLoading"
+              :popup-props="popupPropsProvider"
+              @search="handleProviderSearch"
+              reserve-keyword
+            >
+              <t-option
+                v-for="item in providerList"
+                :key="item.providerId"
+                :label="item.unitNick + (item.unitName ? ' >> ' + item.unitName : '')"
+                :value="item.providerId"
+              />
+            </t-select>
           </t-form-item>
-          <t-form-item label="服务商人员id" name="providerOwnerId">
-            <t-input-number v-model="form.providerOwnerId" placeholder="请输入" />
+          <t-form-item label="服务商人员" name="providerOwnerId">
+            <t-select
+              v-model="form.providerOwnerId"
+              placeholder="请选择服务商人员"
+              clearable @enter="handleQuery"
+              filterable
+              :loading="providerOwnerLoading"
+              :popup-props="popupPropsProviderOwner"
+              @search="handleProviderOwnerSearch"
+              reserve-keyword
+            >
+              <t-option
+                v-for="item in providerOwnerList"
+                :key="item.ownerId"
+                :label="item.name + ' >> ' + item.contactInformation"
+                :value="item.ownerId"
+              />
+            </t-select>
           </t-form-item>
-          <t-form-item label="服务商人员用户id" name="providerUserId">
-            <t-input-number v-model="form.providerUserId" placeholder="请输入" />
+          <t-form-item label="服务商人员用户" name="providerUserId">
+            <t-select
+              v-model="form.providerUserId"
+              placeholder="请选择服务商用户"
+              clearable @enter="handleQuery"
+              filterable
+              :loading="providerUserLoading"
+              :popup-props="popupPropsProviderUser"
+              @search="handleProviderUserSearch"
+              reserve-keyword
+            >
+              <t-option
+                v-for="item in providerUserList"
+                :key="item.userId"
+                :label="item.nickName + ' >> ' + item.phonenumber"
+                :value="item.userId"
+              />
+            </t-select>
           </t-form-item>
           <t-form-item label="档案类型" name="type">
             <t-select v-model="form.type" placeholder="请选择档案类型" clearable>
@@ -354,8 +593,9 @@ import {
   SearchIcon,
   SettingIcon,
 } from 'tdesign-icons-vue-next';
+import type { SelectInstance } from 'tdesign-vue-next';
 import type { FormInstanceFunctions, FormRule, PageInfo, PrimaryTableCol, SubmitContext,  } from 'tdesign-vue-next';
-import { computed, getCurrentInstance, ref } from 'vue';
+import { computed, getCurrentInstance, ref, nextTick } from 'vue';
 import { ArrayOps } from '@/utils/array';
 
 import type { PetHelathRecordForm, PetHelathRecordQuery, PetHelathRecordVo } from '@/api/petFriendly/model/helathRecordModel';
@@ -589,6 +829,404 @@ function handleExport() {
     `helathRecord_${new Date().getTime()}.xlsx`,
   );
 }
+
+let searchTimer: any = null;          // 简单防抖
+const refSelect = ref<SelectInstance>();
+const refOwnerSelect = ref<any>(); // 拿到组件实例
+
+/* ---------  查询主人翁 ------- */
+import type { PetOwnerQuery, PetOwnerVo } from '@/api/petFriendly/model/ownerModel';
+import { listOwner } from '@/api/petFriendly/owner';
+
+/** 定义 */
+const ownerQueryParams = ref<PetOwnerQuery>({
+  pageNum: 1,
+  pageSize: 20,
+  name: undefined
+})
+const ownerLoading = ref(false)
+const ownerList = ref<PetOwnerVo[]>([]);
+const ownerFinished = ref(false);   // 是否已加载完
+
+/* 远程搜索（防抖 300 ms） */
+function handleOwnerSearch(keyword: string) {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    ownerQueryParams.value.name = keyword.trim();
+    ownerQueryParams.value.pageNum   = 1;
+    ownerFinished.value = false;
+    loadOwnerList(true);   // true 表示重置列表
+  }, 300);
+}
+/** 加载主人翁 */
+async function loadOwnerList(reset = false): Promise<void> {
+  if (ownerFinished.value) return;
+  ownerLoading.value = true;
+  try {
+    if (reset) {
+      ownerQueryParams.value.pageNum = 1;
+      ownerFinished.value = false;
+      ownerList.value = [];
+    }
+    const { rows = [], total = 0 } = await listOwner(ownerQueryParams.value);
+    ownerList.value.push(...rows);
+    ownerFinished.value = ownerList.value.length >= total;
+  } finally {
+    ownerLoading.value = false;
+  }
+}
+const popupPropsOwner = {
+  onScroll: ({ e }: { e: WheelEvent }) => {
+    const el = e.currentTarget as HTMLElement;
+    if (!el) return;
+    const bottom = el.scrollHeight - el.scrollTop - el.clientHeight < 2;
+    if (bottom && !ownerLoading.value && !ownerFinished.value) {
+      ownerQueryParams.value.pageNum += 1;
+      loadOwnerList().then(() => {
+        nextTick(() => refOwnerSelect.value?.updatePopup?.());
+      });
+    }
+  },
+  // 打开弹窗时拿到 dom（tdesign 每次打开会重新创建）
+  onVisibleChange: async (visible: boolean) => {
+    if (visible && ownerList.value.length === 0 && !ownerLoading.value) {
+      await loadOwnerList(true);
+      // 关键 4：等浮层渲染完再刷新
+      nextTick(() => refOwnerSelect.value?.updatePopup?.());
+    }
+  },
+};
+
+/* ---------  查询用户 ------- */
+import type { SysUserQuery, SysUserVo } from '@/api/system/model/userModel';
+import { listUser } from '@/api/system/user';
+
+/** 定义 */
+const userQueryParams = ref<SysUserQuery>({
+  pageNum: 1,
+  pageSize: 20,
+  nickName: undefined
+})
+const userLoading = ref(false)
+const userList = ref<SysUserVo[]>([]);
+const userFinished = ref(false);   // 是否已加载完
+
+/* 远程搜索（防抖 300 ms） */
+function handleUserSearch(keyword: string) {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    userQueryParams.value.nickName = keyword.trim();
+    userQueryParams.value.pageNum   = 1;
+    userFinished.value = false;
+    loadUserList(true);   // true 表示重置列表
+  }, 300);
+}
+/** 加载用户 */
+async function loadUserList(reset = false): Promise<void> {
+  if (userFinished.value) return;
+  userLoading.value = true;
+  try {
+    if (reset) {
+      userQueryParams.value.pageNum = 1;
+      userFinished.value = false;
+      userList.value = [];
+    }
+    const { rows = [], total = 0 } = await listUser(userQueryParams.value);
+    userList.value.push(...rows);
+    userFinished.value = userList.value.length >= total;
+  } finally {
+    userLoading.value = false;
+  }
+}
+
+/* 滚动容器 */
+let scrollNode: HTMLElement | null = null;
+const popupPropsUser = {
+  onScroll: ({ e }: { e: WheelEvent }) => {
+    const el = e.target as HTMLElement;
+    if (!el) return;
+    const bottom = el.scrollHeight - el.scrollTop - el.clientHeight < 2;
+    if (bottom && !userLoading.value && !userFinished.value) {
+      userQueryParams.value.pageNum += 1;
+      loadUserList();
+    }
+  },
+  // 打开弹窗时拿到 dom（tdesign 每次打开会重新创建）
+  onVisibleChange: (visible: boolean) => {
+    if (visible && userList.value.length === 0 && !userLoading.value) {
+      loadUserList(true).then(() => {
+        // 数据回来后，让浮层重新计算位置
+        nextTick(() => refSelect.value?.updatePopup());
+      });
+    }
+  },
+};
+
+
+/* ---------  查询友好场所 ------- */
+import type { PetFriendlyPlaceQuery, PetFriendlyPlaceVo } from '@/api/petFriendly/model/friendlyPlaceModel';
+import { listFriendlyPlace } from '@/api/petFriendly/friendlyPlace';
+
+/** 定义 */
+const placeQueryParams = ref<PetFriendlyPlaceQuery>({
+  pageNum: 1,
+  pageSize: 20,
+  name: undefined
+})
+const placeLoading = ref(false)
+const placeList = ref<PetFriendlyPlaceVo[]>([]);
+const placeFinished = ref(false);   // 是否已加载完
+
+/* 远程搜索（防抖 300 ms） */
+function handlePlaceSearch(keyword: string) {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    placeQueryParams.value.name = keyword.trim();
+    placeQueryParams.value.pageNum   = 1;
+    placeFinished.value = false;
+    loadPlaceList(true);   // true 表示重置列表
+  }, 300);
+}
+/** 加载友好场所 */
+function loadPlaceList(isSearch = false) {
+  if (placeFinished.value) return;
+  placeLoading.value = true;
+  listFriendlyPlace(placeQueryParams.value).then((res) => {
+    placeLoading.value = false;
+    if (isSearch) placeList.value = [];    
+    placeList.value.push(...res.rows);
+  });
+}
+const popupPropsPlace = {
+  onScroll: ({ e }: { e: WheelEvent }) => {
+    const el = e.target as HTMLElement;
+    if (!el) return;
+    const bottom = el.scrollHeight - el.scrollTop - el.clientHeight < 2;
+    if (bottom && !placeLoading.value && !placeFinished.value) {
+      placeQueryParams.value.pageNum += 1;
+      loadPlaceList();
+    }
+  },
+  // 打开弹窗时拿到 dom（tdesign 每次打开会重新创建）
+  onVisibleChange: (v: boolean) => v && nextTick(() => {
+    scrollNode = document.querySelector('.t-select__dropdown') as HTMLElement;
+  }),
+};
+
+
+
+/* ---------  查询宠物档案 ------- */
+import type { PetInformationQuery, PetInformationVo } from '@/api/petFriendly/model/informationModel';
+import { listInformation } from '@/api/petFriendly/information';
+
+/** 定义 */
+const petQueryParams = ref<PetInformationQuery>({
+  pageNum: 1,
+  pageSize: 20,
+  name: undefined
+})
+const petLoading = ref(false)
+const petList = ref<PetInformationVo[]>([]);
+const petFinished = ref(false);   // 是否已加载完
+
+/* 远程搜索（防抖 300 ms） */
+function handlePetSearch(keyword: string) {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    petQueryParams.value.name = keyword.trim();
+    petQueryParams.value.pageNum   = 1;
+    petFinished.value = false;
+    loadPetList(true);   // true 表示重置列表
+  }, 300);
+}
+/** 加载宠物 */
+function loadPetList(isSearch = false) {
+  if (petFinished.value) return;
+  petLoading.value = true;
+  listInformation(petQueryParams.value).then((res) => {
+    petLoading.value = false;
+    if (isSearch) petList.value = [];    
+    petList.value.push(...res.rows);
+  });
+}
+const popupPropsPet = {
+  onScroll: ({ e }: { e: WheelEvent }) => {
+    const el = e.target as HTMLElement;
+    if (!el) return;
+    const bottom = el.scrollHeight - el.scrollTop - el.clientHeight < 2;
+    if (bottom && !petLoading.value && !petFinished.value) {
+      petQueryParams.value.pageNum += 1;
+      loadPetList();
+    }
+  },
+  // 打开弹窗时拿到 dom（tdesign 每次打开会重新创建）
+  onVisibleChange: (v: boolean) => v && nextTick(() => {
+    scrollNode = document.querySelector('.t-select__dropdown') as HTMLElement;
+  }),
+};
+
+/* ---------  查询服务商 ------- */
+import type { PetServiceProviderQuery, PetServiceProviderVo } from '@/api/petFriendly/model/serviceProviderModel';
+import { listServiceProvider } from '@/api/petFriendly/serviceProvider';
+
+/** 定义 */
+const providerQueryParams = ref<PetServiceProviderQuery>({
+  pageNum: 1,
+  pageSize: 20,
+  unitNick: undefined
+})
+const providerLoading = ref(false)
+const providerList = ref<PetServiceProviderVo[]>([]);
+const providerFinished = ref(false);   // 是否已加载完
+
+/* 远程搜索（防抖 300 ms） */
+function handleProviderSearch(keyword: string) {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    providerQueryParams.value.unitNick = keyword.trim();
+    providerQueryParams.value.pageNum   = 1;
+    providerFinished.value = false;
+    loadProviderList(true);   // true 表示重置列表
+  }, 300);
+}
+/** 加载服务商 */
+function loadProviderList(isSearch = false) {
+  if (providerFinished.value) return;
+  providerLoading.value = true;
+  listServiceProvider(providerQueryParams.value).then((res) => {
+    providerLoading.value = false;
+    if (isSearch) providerList.value = [];    
+    providerList.value.push(...res.rows);
+  });
+}
+const popupPropsProvider = {
+  onScroll: ({ e }: { e: WheelEvent }) => {
+    const el = e.target as HTMLElement;
+    if (!el) return;
+    const bottom = el.scrollHeight - el.scrollTop - el.clientHeight < 2;
+    if (bottom && !providerLoading.value && !providerFinished.value) {
+      providerQueryParams.value.pageNum += 1;
+      loadProviderList();
+    }
+  },
+  // 打开弹窗时拿到 dom（tdesign 每次打开会重新创建）
+  onVisibleChange: (v: boolean) => v && nextTick(() => {
+    scrollNode = document.querySelector('.t-select__dropdown') as HTMLElement;
+  }),
+};
+
+/** 查询服务商主人翁 */
+/** 定义 */
+const providerOwnerQueryParams = ref<PetOwnerQuery>({
+  pageNum: 1,
+  pageSize: 20,
+  name: undefined
+})
+const providerOwnerLoading = ref(false)
+const providerOwnerList = ref<PetOwnerVo[]>([]);
+const providerOwnerFinished = ref(false);   // 是否已加载完
+
+/* 远程搜索（防抖 300 ms） */
+function handleProviderOwnerSearch(keyword: string) {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    providerOwnerQueryParams.value.name = keyword.trim();
+    providerOwnerQueryParams.value.pageNum   = 1;
+    providerOwnerFinished.value = false;
+    loadProviderOwnerList(true);   // true 表示重置列表
+  }, 300);
+}
+/** 加载主人翁 */
+function loadProviderOwnerList(isSearch = false) {
+  if (providerOwnerFinished.value) return;
+  providerOwnerLoading.value = true;
+  listOwner(providerOwnerQueryParams.value).then((res) => {
+    providerOwnerLoading.value = false;
+    if (isSearch) providerOwnerList.value = [];    
+    providerOwnerList.value.push(...res.rows);
+  });
+}
+const popupPropsProviderOwner = {
+  onScroll: ({ e }: { e: WheelEvent }) => {
+    const el = e.target as HTMLElement;
+    if (!el) return;
+    const bottom = el.scrollHeight - el.scrollTop - el.clientHeight < 2;
+    if (bottom && !providerOwnerLoading.value && !providerOwnerFinished.value) {
+      providerOwnerQueryParams.value.pageNum += 1;
+      loadProviderOwnerList();
+    }
+  },
+  // 打开弹窗时拿到 dom（tdesign 每次打开会重新创建）
+  onVisibleChange: (v: boolean) => v && nextTick(() => {
+    scrollNode = document.querySelector('.t-select__dropdown') as HTMLElement;
+  }),
+};
+
+
+/** 查询服务商用户 */
+/** 定义 */
+const providerUserQueryParams = ref<SysUserQuery>({
+  pageNum: 1,
+  pageSize: 20,
+  nickName: undefined
+})
+const providerUserLoading = ref(false)
+const providerUserList = ref<SysUserVo[]>([]);
+const providerUserFinished = ref(false);   // 是否已加载完
+
+/* 远程搜索（防抖 300 ms） */
+function handleProviderUserSearch(keyword: string) {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    providerUserQueryParams.value.nickName = keyword.trim();
+    providerUserQueryParams.value.pageNum   = 1;
+    providerUserFinished.value = false;
+    loadProviderUserList(true);   // true 表示重置列表
+  }, 300);
+}
+/** 加载主人翁 */
+function loadProviderUserList(isSearch = false) {
+  if (providerUserFinished.value) return;
+  providerUserLoading.value = true;
+  listUser(providerUserQueryParams.value).then((res) => {
+    providerUserLoading.value = false;
+    if (isSearch) providerUserList.value = [];    
+    providerUserList.value.push(...res.rows);
+  });
+}
+const popupPropsProviderUser = {
+  onScroll: ({ e }: { e: WheelEvent }) => {
+    const el = e.target as HTMLElement;
+    if (!el) return;
+    const bottom = el.scrollHeight - el.scrollTop - el.clientHeight < 2;
+    if (bottom && !providerUserLoading.value && !providerUserFinished.value) {
+      providerUserQueryParams.value.pageNum += 1;
+      loadProviderUserList();
+    }
+  },
+  // 打开弹窗时拿到 dom（tdesign 每次打开会重新创建）
+  onVisibleChange: (v: boolean) => v && nextTick(() => {
+    scrollNode = document.querySelector('.t-select__dropdown') as HTMLElement;
+  }),
+};
+
+/* -------------------- 初始化 -------------------- */
+onMounted(() => {
+  // // 加载用户
+  // loadUserList()
+  // // 加载主人翁
+  // loadOwnerList()
+  // // 加载场所
+  // loadPlaceList()
+  // // 加载宠物
+  // loadPetList()
+  // // 加载服务商
+  // loadProviderList()
+  // // 加载服务商主人翁
+  // loadProviderOwnerList()
+  // // 加载服务商用户
+  // loadProviderUserList()
+})
 
 getList();
 </script>

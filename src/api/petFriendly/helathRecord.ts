@@ -17,7 +17,7 @@ export function listHelathRecord(query?: PetHelathRecordQuery) {
  * 查询宠物健康档案记录详细
  * @param healthId 主键
  */
-export function getHelathRecord(healthId: number) {
+export function getHelathRecord(healthId: string | number) {
   return request.get<R<PetHelathRecordVo>>({
     url: `/petFriendly/helathRecord/${healthId}`,
   });

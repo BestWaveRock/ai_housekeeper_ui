@@ -46,7 +46,7 @@
             <t-option
               v-for="user in userList"
               :key="user.userId"
-              :label="user.nickName + '>>' + user.phonenumber"
+              :label="user.nickName + ' >> ' + user.phonenumber"
               :value="user.userId"
             />
           </t-select>
@@ -732,6 +732,12 @@ function handleUpdate(row?: PetServiceProviderVo) {
   getServiceProvider(providerId).then((response) => {
     buttonLoading.value = false;
     form.value = response.data;
+    if (form.value.proviceCode) {
+      fetchRegion(1, form.value.proviceCode).then(res => (cityList.value = res.rows))
+    }
+    if (form.value.cityCode) {
+      fetchRegion(2, form.value.cityCode).then(res => (districtList.value = res.rows))
+    }
   });
 }
 
@@ -857,7 +863,7 @@ async function loadName(id: string | number) {
   if (cache.value[key] !== undefined) return cache.value[key]
 
   try {
-    const { data } = await getRegionInfo(Number(id))
+    const { data } = await getRegionInfo(String(id))
     cache.value[key] = data.extName ?? ''
   } catch {
     cache.value[key] = ''

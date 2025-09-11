@@ -17,7 +17,7 @@ export function listOwnerBehevior(query?: PetOwnerBeheviorQuery) {
  * 查询宠物主人行为记录详细
  * @param beheviorId 主键
  */
-export function getOwnerBehevior(beheviorId: number) {
+export function getOwnerBehevior(beheviorId: string | number) {
   return request.get<R<PetOwnerBeheviorVo>>({
     url: `/petFriendly/ownerBehevior/${beheviorId}`,
   });

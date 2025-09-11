@@ -17,7 +17,7 @@ export function listPlaceFavorites(query?: PetPlaceFavoritesQuery) {
  * 查询宠物场所收藏记录详细
  * @param favoritesId 主键
  */
-export function getPlaceFavorites(favoritesId: number) {
+export function getPlaceFavorites(favoritesId: string | number) {
   return request.get<R<PetPlaceFavoritesVo>>({
     url: `/petFriendly/placeFavorites/${favoritesId}`,
   });

@@ -17,7 +17,7 @@ export function listOwnerAssetsRecord(query?: PetOwnerAssetsRecordQuery) {
  * 查询宠物主人资产变动记录详细
  * @param ownerAssetsRecordId 主键
  */
-export function getOwnerAssetsRecord(ownerAssetsRecordId: number) {
+export function getOwnerAssetsRecord(ownerAssetsRecordId: string | number) {
   return request.get<R<PetOwnerAssetsRecordVo>>({
     url: `/petFriendly/ownerAssetsRecord/${ownerAssetsRecordId}`,
   });

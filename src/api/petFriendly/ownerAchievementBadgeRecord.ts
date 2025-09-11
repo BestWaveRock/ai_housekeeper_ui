@@ -17,7 +17,7 @@ export function listOwnerAchievementBadgeRecord(query?: PetOwnerAchievementBadge
  * 查询宠物主人成就徽章记录详细
  * @param achievementBadgeRecordId 主键
  */
-export function getOwnerAchievementBadgeRecord(achievementBadgeRecordId: number) {
+export function getOwnerAchievementBadgeRecord(achievementBadgeRecordId: string | number) {
   return request.get<R<PetOwnerAchievementBadgeRecordVo>>({
     url: `/petFriendly/ownerAchievementBadgeRecord/${achievementBadgeRecordId}`,
   });

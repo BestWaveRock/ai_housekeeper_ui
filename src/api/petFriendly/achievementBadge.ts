@@ -17,7 +17,7 @@ export function listAchievementBadge(query?: PetAchievementBadgeQuery) {
  * 查询成就徽章系统详细
  * @param achievementBadgeId 主键
  */
-export function getAchievementBadge(achievementBadgeId: number) {
+export function getAchievementBadge(achievementBadgeId: string | number) {
   return request.get<R<PetAchievementBadgeVo>>({
     url: `/petFriendly/achievementBadge/${achievementBadgeId}`,
   });

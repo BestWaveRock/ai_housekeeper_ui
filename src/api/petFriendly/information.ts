@@ -17,7 +17,7 @@ export function listInformation(query?: PetInformationQuery) {
  * 查询宠物信息档案详细
  * @param petId 主键
  */
-export function getInformation(petId: number) {
+export function getInformation(petId: string | number) {
   return request.get<R<PetInformationVo>>({
     url: `/petFriendly/information/${petId}`,
   });

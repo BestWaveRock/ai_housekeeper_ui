@@ -17,7 +17,7 @@ export function listServiceConsumerRecord(query?: PetServiceConsumerRecordQuery)
  * 查询宠物服务消费记录详细
  * @param consumerId 主键
  */
-export function getServiceConsumerRecord(consumerId: number) {
+export function getServiceConsumerRecord(consumerId: string | number) {
   return request.get<R<PetServiceConsumerRecordVo>>({
     url: `/petFriendly/serviceConsumerRecord/${consumerId}`,
   });

@@ -17,7 +17,7 @@ export function listServiceProvider(query?: PetServiceProviderQuery) {
  * 查询宠物服务商信息详细
  * @param providerId 主键
  */
-export function getServiceProvider(providerId: number) {
+export function getServiceProvider(providerId: string | number) {
   return request.get<R<PetServiceProviderVo>>({
     url: `/petFriendly/serviceProvider/${providerId}`,
   });

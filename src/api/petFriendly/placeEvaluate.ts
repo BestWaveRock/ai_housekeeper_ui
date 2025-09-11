@@ -17,7 +17,7 @@ export function listPlaceEvaluate(query?: PetPlaceEvaluateQuery) {
  * 查询宠物场所评价记录详细
  * @param evaluateId 主键
  */
-export function getPlaceEvaluate(evaluateId: number) {
+export function getPlaceEvaluate(evaluateId: string | number) {
   return request.get<R<PetPlaceEvaluateVo>>({
     url: `/petFriendly/placeEvaluate/${evaluateId}`,
   });

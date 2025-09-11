@@ -17,7 +17,7 @@ export function listOwner(query?: PetOwnerQuery) {
  * 查询宠物主人档案详细
  * @param ownerId 主键
  */
-export function getOwner(ownerId: number) {
+export function getOwner(ownerId: string | number) {
   return request.get<R<PetOwnerVo>>({
     url: `/petFriendly/owner/${ownerId}`,
   });
