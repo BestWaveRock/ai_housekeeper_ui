@@ -17,16 +17,16 @@
             ref="refOwnerSelect"
             v-model="queryParams.ownerId"
             placeholder="请选择主人翁"
-            clearable @enter="handleQuery"
+            clearable 
             filterable
             :loading="ownerLoading"
-            :popup-props="popupPropsOwner"
             @search="handleOwnerSearch"
+            @enter="handleQuery"
             reserve-keyword
           >
             <!-- 空状态 -->
             <t-option
-              v-if="ownerList.length === 0"
+              v-if="ownerList.length == 0"
               :value="''"
               label=""
               disabled
@@ -49,7 +49,6 @@
             clearable @enter="handleQuery"
             filterable
             :loading="userLoading"
-            :popup-props="popupPropsUser"
             @search="handleUserSearch"
             reserve-keyword
           >
@@ -72,7 +71,6 @@
             clearable @enter="handleQuery"
             filterable
             :loading="placeLoading"
-            :popup-props="popupPropsPlace"
             @search="handlePlaceSearch"
             reserve-keyword
           >
@@ -91,7 +89,6 @@
             clearable @enter="handleQuery"
             filterable
             :loading="petLoading"
-            :popup-props="popupPropsPet"
             @search="handlePetSearch"
             reserve-keyword
           >
@@ -110,7 +107,6 @@
             clearable @enter="handleQuery"
             filterable
             :loading="providerLoading"
-            :popup-props="popupPropsProvider"
             @search="handleProviderSearch"
             reserve-keyword
           >
@@ -129,7 +125,6 @@
             clearable @enter="handleQuery"
             filterable
             :loading="providerOwnerLoading"
-            :popup-props="popupPropsProviderOwner"
             @search="handleProviderOwnerSearch"
             reserve-keyword
           >
@@ -148,7 +143,6 @@
             clearable @enter="handleQuery"
             filterable
             :loading="providerUserLoading"
-            :popup-props="popupPropsProviderUser"
             @search="handleProviderUserSearch"
             reserve-keyword
           >
@@ -593,7 +587,6 @@ import {
   SearchIcon,
   SettingIcon,
 } from 'tdesign-icons-vue-next';
-import type { SelectInstance } from 'tdesign-vue-next';
 import type { FormInstanceFunctions, FormRule, PageInfo, PrimaryTableCol, SubmitContext,  } from 'tdesign-vue-next';
 import { computed, getCurrentInstance, ref, nextTick } from 'vue';
 import { ArrayOps } from '@/utils/array';
@@ -831,8 +824,6 @@ function handleExport() {
 }
 
 let searchTimer: any = null;          // 简单防抖
-const refSelect = ref<SelectInstance>();
-const refOwnerSelect = ref<any>(); // 拿到组件实例
 
 /* ---------  查询主人翁 ------- */
 import type { PetOwnerQuery, PetOwnerVo } from '@/api/petFriendly/model/ownerModel';
@@ -875,27 +866,6 @@ async function loadOwnerList(reset = false): Promise<void> {
     ownerLoading.value = false;
   }
 }
-const popupPropsOwner = {
-  onScroll: ({ e }: { e: WheelEvent }) => {
-    const el = e.currentTarget as HTMLElement;
-    if (!el) return;
-    const bottom = el.scrollHeight - el.scrollTop - el.clientHeight < 2;
-    if (bottom && !ownerLoading.value && !ownerFinished.value) {
-      ownerQueryParams.value.pageNum += 1;
-      loadOwnerList().then(() => {
-        nextTick(() => refOwnerSelect.value?.updatePopup?.());
-      });
-    }
-  },
-  // 打开弹窗时拿到 dom（tdesign 每次打开会重新创建）
-  onVisibleChange: async (visible: boolean) => {
-    if (visible && ownerList.value.length === 0 && !ownerLoading.value) {
-      await loadOwnerList(true);
-      // 关键 4：等浮层渲染完再刷新
-      nextTick(() => refOwnerSelect.value?.updatePopup?.());
-    }
-  },
-};
 
 /* ---------  查询用户 ------- */
 import type { SysUserQuery, SysUserVo } from '@/api/system/model/userModel';
@@ -939,29 +909,6 @@ async function loadUserList(reset = false): Promise<void> {
   }
 }
 
-/* 滚动容器 */
-let scrollNode: HTMLElement | null = null;
-const popupPropsUser = {
-  onScroll: ({ e }: { e: WheelEvent }) => {
-    const el = e.target as HTMLElement;
-    if (!el) return;
-    const bottom = el.scrollHeight - el.scrollTop - el.clientHeight < 2;
-    if (bottom && !userLoading.value && !userFinished.value) {
-      userQueryParams.value.pageNum += 1;
-      loadUserList();
-    }
-  },
-  // 打开弹窗时拿到 dom（tdesign 每次打开会重新创建）
-  onVisibleChange: (visible: boolean) => {
-    if (visible && userList.value.length === 0 && !userLoading.value) {
-      loadUserList(true).then(() => {
-        // 数据回来后，让浮层重新计算位置
-        nextTick(() => refSelect.value?.updatePopup());
-      });
-    }
-  },
-};
-
 
 /* ---------  查询友好场所 ------- */
 import type { PetFriendlyPlaceQuery, PetFriendlyPlaceVo } from '@/api/petFriendly/model/friendlyPlaceModel';
@@ -997,22 +944,6 @@ function loadPlaceList(isSearch = false) {
     placeList.value.push(...res.rows);
   });
 }
-const popupPropsPlace = {
-  onScroll: ({ e }: { e: WheelEvent }) => {
-    const el = e.target as HTMLElement;
-    if (!el) return;
-    const bottom = el.scrollHeight - el.scrollTop - el.clientHeight < 2;
-    if (bottom && !placeLoading.value && !placeFinished.value) {
-      placeQueryParams.value.pageNum += 1;
-      loadPlaceList();
-    }
-  },
-  // 打开弹窗时拿到 dom（tdesign 每次打开会重新创建）
-  onVisibleChange: (v: boolean) => v && nextTick(() => {
-    scrollNode = document.querySelector('.t-select__dropdown') as HTMLElement;
-  }),
-};
-
 
 
 /* ---------  查询宠物档案 ------- */
@@ -1049,21 +980,6 @@ function loadPetList(isSearch = false) {
     petList.value.push(...res.rows);
   });
 }
-const popupPropsPet = {
-  onScroll: ({ e }: { e: WheelEvent }) => {
-    const el = e.target as HTMLElement;
-    if (!el) return;
-    const bottom = el.scrollHeight - el.scrollTop - el.clientHeight < 2;
-    if (bottom && !petLoading.value && !petFinished.value) {
-      petQueryParams.value.pageNum += 1;
-      loadPetList();
-    }
-  },
-  // 打开弹窗时拿到 dom（tdesign 每次打开会重新创建）
-  onVisibleChange: (v: boolean) => v && nextTick(() => {
-    scrollNode = document.querySelector('.t-select__dropdown') as HTMLElement;
-  }),
-};
 
 /* ---------  查询服务商 ------- */
 import type { PetServiceProviderQuery, PetServiceProviderVo } from '@/api/petFriendly/model/serviceProviderModel';
@@ -1099,21 +1015,6 @@ function loadProviderList(isSearch = false) {
     providerList.value.push(...res.rows);
   });
 }
-const popupPropsProvider = {
-  onScroll: ({ e }: { e: WheelEvent }) => {
-    const el = e.target as HTMLElement;
-    if (!el) return;
-    const bottom = el.scrollHeight - el.scrollTop - el.clientHeight < 2;
-    if (bottom && !providerLoading.value && !providerFinished.value) {
-      providerQueryParams.value.pageNum += 1;
-      loadProviderList();
-    }
-  },
-  // 打开弹窗时拿到 dom（tdesign 每次打开会重新创建）
-  onVisibleChange: (v: boolean) => v && nextTick(() => {
-    scrollNode = document.querySelector('.t-select__dropdown') as HTMLElement;
-  }),
-};
 
 /** 查询服务商主人翁 */
 /** 定义 */
@@ -1146,21 +1047,6 @@ function loadProviderOwnerList(isSearch = false) {
     providerOwnerList.value.push(...res.rows);
   });
 }
-const popupPropsProviderOwner = {
-  onScroll: ({ e }: { e: WheelEvent }) => {
-    const el = e.target as HTMLElement;
-    if (!el) return;
-    const bottom = el.scrollHeight - el.scrollTop - el.clientHeight < 2;
-    if (bottom && !providerOwnerLoading.value && !providerOwnerFinished.value) {
-      providerOwnerQueryParams.value.pageNum += 1;
-      loadProviderOwnerList();
-    }
-  },
-  // 打开弹窗时拿到 dom（tdesign 每次打开会重新创建）
-  onVisibleChange: (v: boolean) => v && nextTick(() => {
-    scrollNode = document.querySelector('.t-select__dropdown') as HTMLElement;
-  }),
-};
 
 
 /** 查询服务商用户 */
@@ -1194,38 +1080,23 @@ function loadProviderUserList(isSearch = false) {
     providerUserList.value.push(...res.rows);
   });
 }
-const popupPropsProviderUser = {
-  onScroll: ({ e }: { e: WheelEvent }) => {
-    const el = e.target as HTMLElement;
-    if (!el) return;
-    const bottom = el.scrollHeight - el.scrollTop - el.clientHeight < 2;
-    if (bottom && !providerUserLoading.value && !providerUserFinished.value) {
-      providerUserQueryParams.value.pageNum += 1;
-      loadProviderUserList();
-    }
-  },
-  // 打开弹窗时拿到 dom（tdesign 每次打开会重新创建）
-  onVisibleChange: (v: boolean) => v && nextTick(() => {
-    scrollNode = document.querySelector('.t-select__dropdown') as HTMLElement;
-  }),
-};
 
 /* -------------------- 初始化 -------------------- */
-onMounted(() => {
-  // // 加载用户
-  // loadUserList()
-  // // 加载主人翁
-  // loadOwnerList()
-  // // 加载场所
-  // loadPlaceList()
-  // // 加载宠物
-  // loadPetList()
-  // // 加载服务商
-  // loadProviderList()
-  // // 加载服务商主人翁
-  // loadProviderOwnerList()
-  // // 加载服务商用户
-  // loadProviderUserList()
+onMounted(async () => {
+  // 加载用户
+  loadUserList()
+  // 加载主人翁
+  loadOwnerList()
+  // 加载场所
+  loadPlaceList()
+  // 加载宠物
+  loadPetList()
+  // 加载服务商
+  loadProviderList()
+  // 加载服务商主人翁
+  loadProviderOwnerList()
+  // 加载服务商用户
+  loadProviderUserList()
 })
 
 getList();
