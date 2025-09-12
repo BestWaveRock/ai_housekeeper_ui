@@ -22,10 +22,10 @@
           <t-input v-model="queryParams.commodityInformation" placeholder="请输入商品信息" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="商品价值:积分" name="commodityValue">
-          <t-input v-model="queryParams.commodityValue" placeholder="请输入商品价值:积分" clearable @enter="handleQuery" />
+          <t-input v-model="queryParams.commodityValue" placeholder="请输入商品价值:积分" :min="0" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="库存" name="inventory">
-          <t-input v-model="queryParams.inventory" placeholder="请输入库存" clearable @enter="handleQuery" />
+          <t-input v-model="queryParams.inventory" placeholder="请输入库存" :min="0" clearable @enter="handleQuery" />
         </t-form-item>
         <!-- <t-form-item label="保留字端" name="ext">
           <t-input v-model="queryParams.ext" placeholder="请输入保留字端" clearable @enter="handleQuery" />
@@ -180,10 +180,10 @@
             />
           </t-form-item>
           <t-form-item label="商品价值:积分" name="commodityValue">
-            <t-input-number v-model="form.commodityValue" placeholder="请输入" />
+            <t-input-number v-model="form.commodityValue" :min="0" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="库存" name="inventory">
-            <t-input-number v-model="form.inventory" placeholder="请输入" />
+            <t-input-number v-model="form.inventory" :min="0" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="备注" name="remark">
             <t-input v-model="form.remark" placeholder="请输入备注" clearable />

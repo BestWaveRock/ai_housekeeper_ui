@@ -77,7 +77,7 @@
           <t-input v-model="queryParams.commodityInformation" placeholder="请输入商品信息" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="商品价值:积分" name="commodityValue">
-          <t-input v-model="queryParams.commodityValue" placeholder="请输入商品价值:积分" clearable @enter="handleQuery" />
+          <t-input v-model="queryParams.commodityValue" placeholder="请输入商品价值:积分" :min="0" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="变动值" name="changeValue">
           <t-input v-model="queryParams.changeValue" placeholder="请输入变动值" clearable @enter="handleQuery" />
@@ -309,16 +309,16 @@
             />
           </t-form-item>
           <t-form-item label="商品价值:积分" name="commodityValue">
-            <t-input-number v-model="form.commodityValue" placeholder="请输入" />
+            <t-input-number v-model="form.commodityValue" :min="0" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="变动值" name="changeValue">
-            <t-input-number v-model="form.changeValue" placeholder="请输入" />
+            <t-input-number v-model="form.changeValue" :min="0" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="变动前值" name="beforeValue">
-            <t-input-number v-model="form.beforeValue" placeholder="请输入" />
+            <t-input-number v-model="form.beforeValue" :min="0" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="变动后值" name="afterValue">
-            <t-input-number v-model="form.afterValue" placeholder="请输入" />
+            <t-input-number v-model="form.afterValue" :min="0" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="记录IP" name="ip">
             <t-input v-model="form.ip" placeholder="请输入记录IP" clearable />

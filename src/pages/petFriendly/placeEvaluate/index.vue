@@ -37,7 +37,7 @@
           <t-input v-model="queryParams.serviceId" placeholder="请输入服务id" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="实际消费金额" name="consumptionAmount">
-          <t-input v-model="queryParams.consumptionAmount" placeholder="请输入实际消费金额" clearable @enter="handleQuery" />
+          <t-input v-model="queryParams.consumptionAmount" placeholder="请输入实际消费金额" :min="0" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="评分" name="rate">
           <t-input v-model="queryParams.rate" placeholder="请输入评分" clearable @enter="handleQuery" />
@@ -214,7 +214,7 @@
             <t-input-number v-model="form.serviceId" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="实际消费金额" name="consumptionAmount">
-            <t-input-number v-model="form.consumptionAmount" placeholder="请输入" />
+            <t-input-number v-model="form.consumptionAmount" :min="0" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="评分" name="rate">
             <t-input-number v-model="form.rate" placeholder="请输入" />

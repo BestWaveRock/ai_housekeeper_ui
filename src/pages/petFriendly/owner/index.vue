@@ -130,22 +130,22 @@
           <t-input v-model="queryParams.loveValue" placeholder="请输入爱心值" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="积分金币值" name="integralValue" label-width=100>
-          <t-input v-model="queryParams.integralValue" placeholder="请输入积分金币值" clearable @enter="handleQuery" />
+          <t-input v-model="queryParams.integralValue" placeholder="请输入积分金币值" :min="0" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="成就总数" name="achievementNum">
-          <t-input v-model="queryParams.achievementNum" placeholder="请输入成就总数" clearable @enter="handleQuery" />
+          <t-input v-model="queryParams.achievementNum" placeholder="请输入成就总数" :min="0" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="宠物总数" name="petNum">
-          <t-input v-model="queryParams.petNum" placeholder="请输入宠物总数" clearable @enter="handleQuery" />
+          <t-input v-model="queryParams.petNum" placeholder="请输入宠物总数" :min="0" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="收藏数" name="favoritesNum">
-          <t-input v-model="queryParams.favoritesNum" placeholder="请输入收藏数" clearable @enter="handleQuery" />
+          <t-input v-model="queryParams.favoritesNum" placeholder="请输入收藏数" :min="0" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="浏览数" name="viewsNum">
-          <t-input v-model="queryParams.viewsNum" placeholder="请输入浏览数" clearable @enter="handleQuery" />
+          <t-input v-model="queryParams.viewsNum" placeholder="请输入浏览数" :min="0" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="服务数" name="serviceNum">
-          <t-input v-model="queryParams.serviceNum" placeholder="请输入服务数" clearable @enter="handleQuery" />
+          <t-input v-model="queryParams.serviceNum" placeholder="请输入服务数" :min="0" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="手机信息" name="phoneInformation">
           <t-input v-model="queryParams.phoneInformation" placeholder="请输入手机信息" clearable @enter="handleQuery" />
@@ -451,22 +451,22 @@
             <t-input-number v-model="form.loveValue" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="积分金币值" name="integralValue">
-            <t-input-number v-model="form.integralValue" placeholder="请输入" />
+            <t-input-number v-model="form.integralValue" :min="0" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="成就总数" name="achievementNum">
-            <t-input-number v-model="form.achievementNum" placeholder="请输入" />
+            <t-input-number v-model="form.achievementNum" :min="0" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="宠物总数" name="petNum">
-            <t-input-number v-model="form.petNum" placeholder="请输入" />
+            <t-input-number v-model="form.petNum" :min="0" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="收藏数" name="favoritesNum">
-            <t-input-number v-model="form.favoritesNum" placeholder="请输入" />
+            <t-input-number v-model="form.favoritesNum" :min="0" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="浏览数" name="viewsNum">
-            <t-input-number v-model="form.viewsNum" placeholder="请输入" />
+            <t-input-number v-model="form.viewsNum" :min="0" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="服务数" name="serviceNum">
-            <t-input-number v-model="form.serviceNum" placeholder="请输入" />
+            <t-input-number v-model="form.serviceNum" :min="0" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="手机信息" name="phoneInformation">
             <t-input v-model="form.phoneInformation" placeholder="请输入手机信息" clearable />

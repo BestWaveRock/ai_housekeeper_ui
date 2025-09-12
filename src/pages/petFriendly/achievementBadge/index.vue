@@ -25,10 +25,10 @@
           <t-input v-model="queryParams.achievementRules" placeholder="请输入成就达成条件" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="成就奖励积分值" name="achievementRewardPoints">
-          <t-input v-model="queryParams.achievementRewardPoints" placeholder="请输入成就奖励积分值" clearable @enter="handleQuery" />
+          <t-input v-model="queryParams.achievementRewardPoints" placeholder="请输入成就奖励积分值" :min="0" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="成就奖励爱心值" name="achievementRewardLove">
-          <t-input v-model="queryParams.achievementRewardLove" placeholder="请输入成就奖励爱心值" clearable @enter="handleQuery" />
+          <t-input v-model="queryParams.achievementRewardLove" placeholder="请输入成就奖励爱心值" :min="0" clearable @enter="handleQuery" />
         </t-form-item>
         <!-- <t-form-item label="保留字端" name="ext">
           <t-input v-model="queryParams.ext" placeholder="请输入保留字端" clearable @enter="handleQuery" />
@@ -178,10 +178,10 @@
             <t-textarea v-model="form.achievementRules" placeholder="请输入成就达成条件" />
           </t-form-item>
           <t-form-item label="成就奖励积分值" name="achievementRewardPoints">
-            <t-input-number v-model="form.achievementRewardPoints" placeholder="请输入" />
+            <t-input-number v-model="form.achievementRewardPoints" :min="0" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="成就奖励爱心值" name="achievementRewardLove">
-            <t-input-number v-model="form.achievementRewardLove" placeholder="请输入" />
+            <t-input-number v-model="form.achievementRewardLove" :min="0" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="备注" name="remark">
             <t-input v-model="form.remark" placeholder="请输入备注" clearable />

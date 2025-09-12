@@ -108,13 +108,13 @@
           />
         </t-form-item>
         <t-form-item label="消费金额" name="consumptionAmount">
-          <t-input v-model="queryParams.consumptionAmount" placeholder="请输入消费金额" clearable @enter="handleQuery" />
+          <t-input v-model="queryParams.consumptionAmount" placeholder="请输入消费金额" :min="0" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="退回金额" name="refundAmount">
-          <t-input v-model="queryParams.refundAmount" placeholder="请输入退回金额" clearable @enter="handleQuery" />
+          <t-input v-model="queryParams.refundAmount" placeholder="请输入退回金额" :min="0" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="实际交易金额" name="actualAmount">
-          <t-input v-model="queryParams.actualAmount" placeholder="请输入实际交易金额" clearable @enter="handleQuery" />
+          <t-input v-model="queryParams.actualAmount" placeholder="请输入实际交易金额" :min="0" clearable @enter="handleQuery" />
         </t-form-item>
         <t-form-item label="记录IP" name="ip">
           <t-input v-model="queryParams.ip" placeholder="请输入记录IP" clearable @enter="handleQuery" />
@@ -364,13 +364,13 @@
             />
           </t-form-item>
           <t-form-item label="消费金额" name="consumptionAmount">
-            <t-input-number v-model="form.consumptionAmount" placeholder="请输入" />
+            <t-input-number v-model="form.consumptionAmount" :min="0" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="退回金额" name="refundAmount">
-            <t-input-number v-model="form.refundAmount" placeholder="请输入" />
+            <t-input-number v-model="form.refundAmount" :min="0" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="实际交易金额" name="actualAmount">
-            <t-input-number v-model="form.actualAmount" placeholder="请输入" />
+            <t-input-number v-model="form.actualAmount" :min="0" placeholder="请输入" />
           </t-form-item>
           <t-form-item label="记录IP" name="ip">
             <t-input v-model="form.ip" placeholder="请输入记录IP" clearable />
